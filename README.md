@@ -15,6 +15,9 @@
   <img src="assets/hero.svg" alt="A data-centre cooling pipe with a biofilm layer on the inner wall, above the Sonazyme pipeline: sense, chassis, design, fold, score, rank, explain" width="900" />
 </p>
 
+**We use sonar to detect biofilm build-up in cooling pipes, then release
+enzymes designed to break it down.**
+
 Data centres pull heat out of GPUs with water. Bacteria live in that water and
 glue themselves to the inside of the pipe in a layer called a biofilm. The
 layer insulates the metal, narrows the channel and feeds corrosion, so

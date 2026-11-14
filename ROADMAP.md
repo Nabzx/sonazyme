@@ -25,21 +25,19 @@ described before M0 below.
 
 ## The demo track
 
-One real run, end to end, on one target, shown as five screens. Pre-computed
+One real run, end to end, on one target, shown as three acts. Pre-computed
 where latency would put the demo at risk, and labelled as pre-computed when it
-is.
+is. Full spec in [docs/design/dashboard.md](docs/design/dashboard.md).
 
-| Screen | What it shows | Depends on |
+| Act | What it is | Depends on |
 | --- | --- | --- |
-| 1. The problem | biofilm forms, biocide hits the surface, the matrix survives, the film returns | nothing, it is an animation |
-| 2. The baseline | the chassis enzyme in 3D, with its predicted stability in the envelope and where it gives way | `sense`, `chassis`, `fold`, `score` |
-| 3. The redesign | variants arriving with scores, best variant beside the chassis, changed region highlighted, active site shown untouched | `design`, `fold`, `score`, `rank` |
-| 4. The question | a question answered from this run's artefacts, with what it cites | `explain` |
-| 5. The case | status quo against the approach, scoped as a design tool, with the open questions named | nothing, it is a slide |
+| 1. The narrative | scrollable: the problem, the sealed box, the two lines, the market | nothing of ours, so nothing of ours to cite |
+| 2. The simulation | in place, not scrollable: how an enzyme is designed so it does not denature in the loop, in 3D, from real predicted structures | `sense`, `chassis`, `design`, `fold`, `score`, `rank`, `explain` |
+| 3. The overhead film | ten seconds: sonar pulse, detection, lab, dosing, clean, confirming pulse | nothing, it depicts the intended workflow |
 
-Definition of done: the five screens run from one run manifest, on a laptop,
-offline if the cached run is used, and no screen shows a number without its
-model beside it.
+Definition of done: all three acts run from one run manifest, on a laptop,
+offline if the cached run is used, no screen shows a number without its model
+beside it, and anything illustrative says so on screen.
 
 ## The milestones
 
