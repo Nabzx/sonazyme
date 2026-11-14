@@ -1,0 +1,66 @@
+# Extracellular DNA as the anchor, from the literature.
+#
+# A second target, written to the same schema as the first, to show that
+# changing what we attack is a file rather than a change to any stage
+# (ADR-0002). Nothing here is measured in a cooling loop.
+
+schema_version = 1
+
+[target]
+id = "edna-literature"
+name = "Extracellular DNA literature target"
+summary = "Research target only. No loop sample, operational envelope or Sonazyme wet-lab result."
+
+[target.loop]
+basis = "assumption"
+value = "direct-to-chip"
+reason = "The intended application from the project brief; no operator or site has been selected."
+
+[community]
+basis = "assumption"
+value = ["mixed biofilm community"]
+reason = "Extracellular DNA is reported across Gram-positive and Gram-negative biofilms, not tied here to a named organism."
+source = "https://doi.org/10.1371/journal.pone.0014029"
+
+[[anchor]]
+[anchor.component]
+basis = "literature"
+value = "extracellular DNA"
+source = "https://doi.org/10.1371/journal.pone.0014029"
+reason = "A secreted bacterial DNase dispersed biofilms of both Gram-positive and Gram-negative species in that work. Laboratory biofilms, not a cooling loop."
+
+[anchor.kind]
+basis = "literature"
+value = "extracellular-dna"
+source = "https://doi.org/10.1371/journal.pone.0014029"
+
+[anchor.bond]
+basis = "literature"
+value = "phosphodiester backbone of matrix DNA, cut non-specifically by a metal-dependent endonuclease"
+source = "https://pmc.ncbi.nlm.nih.gov/articles/PMC5758888/"
+reason = "Mechanism and catalytic residues from the NucB crystal structure paper."
+
+[anchor.enzyme_family]
+basis = "literature"
+value = "dnase"
+source = "https://doi.org/10.1371/journal.pone.0014029"
+
+[anchor.share]
+basis = "unknown"
+reason = "No loop sample or matrix composition measurement."
+
+[envelope.temperature_c]
+basis = "unknown"
+reason = "No operator range; a fluid specification ceiling is not a measured exposure range (#6)."
+
+[envelope.ph]
+basis = "unknown"
+reason = "No selected site or fluid; generic guidance is not a site measurement (#6)."
+
+[envelope.chemistry]
+basis = "unknown"
+reason = "No treatment product identities or concentrations supplied by an operator (#6)."
+
+[envelope.residence_time_s]
+basis = "unknown"
+reason = "No hydraulic or film contact-time data (#6)."

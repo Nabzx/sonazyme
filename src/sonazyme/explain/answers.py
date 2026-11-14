@@ -26,8 +26,13 @@ def _answer(text: str, citations: list[dict | None], *, confidence: str) -> dict
     }
 
 
-def _refusal(text: str, missing: list[str]) -> dict:
-    return {"grounded": False, "text": text, "missing": missing, "citations": []}
+def _refusal(text: str, missing: list[str], citations: list[dict | None] | None = None) -> dict:
+    return {
+        "grounded": False,
+        "text": text,
+        "missing": missing,
+        "citations": [citation for citation in (citations or []) if citation],
+    }
 
 
 def what_is_in_this_run(index: Index) -> dict:
@@ -114,10 +119,22 @@ def evaluate_candidates(index: Index) -> dict:
             missing,
         )
     if not index.scores:
+        rejected = sum(len(record.get("rejected", [])) for record in index.rejections)
+        aside = ""
+        if rejected:
+            protected = index.rejections[0].get("active_site", [])
+            aside = (
+                f" Worth saying: {rejected} proposals were set aside before ranking because "
+                f"they change a catalytic residue ({', '.join(str(p) for p in protected)}). "
+                "A model that ranks mutations on how favourable they look has no way of "
+                "knowing what the enzyme is for."
+            )
         return _refusal(
-            f"This run holds {len(index.designs)} designs but no scores, so they cannot be "
-            "ranked or compared. Which is better is exactly what has not been computed.",
+            f"This run holds {len(index.designs)} designs but no stability scores, so they "
+            "cannot be compared in the loop conditions. Which is better is exactly what has "
+            "not been computed." + aside,
             ["a score entry"],
+            [index.cite("design"), index.cite("rejection")],
         )
     return _answer(
         f"{len(index.designs)} designs carry scores in this run. Each verdict below cites the "

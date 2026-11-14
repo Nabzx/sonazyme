@@ -1,5 +1,35 @@
-/* Clean biotech lab, light mode. Settled in #36, applied in #99.
-   Nothing outside this file names a colour. */
+/* Clean biotech lab, light mode, with one dark act inside the pipe.
+   Nothing outside this file names a colour. Scenes read these through
+   getComputedStyle, so CSS and 3D cannot drift apart. */
+
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("fonts/instrument-serif-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist";
+  src: url("fonts/geist-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist";
+  src: url("fonts/geist-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("fonts/geist-mono-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   /* Surface */
@@ -8,10 +38,10 @@
   --border: #e2e8f0;
   --border-strong: #cbd5e1;
 
-  /* Brand and meaning. These three never swap meaning between acts. */
-  --cobalt-hydro: #0284c7;   /* water, flow, engineering trust, changed region */
-  --teal-protein: #0d9488;   /* molecular structure, enzymatic action, active site */
-  --biofilm-ochre: #ea580c;  /* fouling, warning, where the problem is */
+  /* Meaning. These three never swap, in CSS or in any scene. */
+  --teal-protein: #0d9488;   /* active site, the enzyme at work */
+  --cobalt-hydro: #0284c7;   /* changed, engineered region */
+  --biofilm-ochre: #ea580c;  /* fouling, biofilm, its glue */
 
   /* Ink */
   --ink: #0f172a;
@@ -23,16 +53,44 @@
   --teal-tint: #ccfbf1;
   --ochre-tint: #ffedd5;
 
+  /* Neutral scene materials. No meaning attached. */
+  --chain: #aebccd;          /* the protein chain */
+  --steel: #9aa8ba;          /* pipework seen from above */
+  --water: #eef3f8;          /* water in a cut-away pipe */
+
+  /* The dark act: the inside of the pipe */
+  --pipe-void: #050a13;
+  --pipe-wall: #2a3950;
+  --pipe-rib: #50627c;
+  --pipe-ink: #f1f5f9;
+  --pipe-ink-muted: #94a3b8;
+  --pipe-hairline: rgba(241, 245, 249, 0.16);
+  --pipe-cell: #d5deea;
+  --pipe-cell-dead: #3a4658;
+  --pipe-wave: #eef6ff;
+  --pipe-mote: #9fb4cc;
+
+  /* Glass */
+  --glass: rgba(255, 255, 255, 0.62);
+  --glass-strong: rgba(255, 255, 255, 0.82);
+  --glass-edge: rgba(255, 255, 255, 0.9);
+  --glass-dark: rgba(15, 23, 42, 0.5);
+  --glass-dark-edge: rgba(241, 245, 249, 0.14);
+  --glass-blur: 18px;
+  --grid-line: rgba(15, 23, 42, 0.065);
+
   /* Type */
-  --sans: ui-sans-serif, -apple-system, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --size-display: clamp(2.4rem, 5.2vw, 4rem);
-  --size-title: clamp(1.6rem, 2.8vw, 2.2rem);
-  --size-lead: clamp(1.05rem, 1.5vw, 1.25rem);
+  --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --sans: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
+  --size-hero: clamp(2.05rem, 4.35vw, 4.4rem);
+  --size-display: clamp(2.2rem, 4.6vw, 4rem);
+  --size-beat: clamp(4.5rem, 17vw, 15rem);
+  --size-lead: clamp(1.02rem, 1.3vw, 1.2rem);
   --size-body: 1rem;
   --size-small: 0.875rem;
-  --size-micro: 0.75rem;
-  --tracking-micro: 0.08em;
+  --size-micro: 0.6875rem;
+  --tracking-micro: 0.14em;
 
   /* Space, on a 4px base */
   --s1: 0.25rem;
@@ -44,19 +102,23 @@
   --s12: 3rem;
   --s16: 4rem;
   --s24: 6rem;
+  --s32: 8rem;
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+  --measure: 82rem;
 
-  /* Elevation. On white this is a hairline and a whisper, never a heavier fill. */
-  --radius: 10px;
-  --radius-sm: 6px;
+  /* Elevation. A hairline and a whisper, never a heavier fill. */
+  --radius: 20px;
+  --radius-sm: 10px;
+  --shadow-ink: rgba(15, 23, 42, 0.22);
   --shadow-rest: 0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow-raised: 0 4px 16px -6px rgba(15, 23, 42, 0.12), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-contact: 0 18px 32px -24px rgba(15, 23, 42, 0.45);
+  --shadow-glass: 0 30px 60px -36px rgba(15, 23, 42, 0.28), 0 2px 6px rgba(15, 23, 42, 0.04);
 
   /* Motion. Nothing linear, everything settles. */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --fast: 160ms;
   --medium: 320ms;
-  --slow: 640ms;
+  --slow: 900ms;
 }
 
 @media (prefers-reduced-motion: reduce) {

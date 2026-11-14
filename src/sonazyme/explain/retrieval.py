@@ -46,7 +46,9 @@ class Index:
     structures: list[dict] = field(default_factory=list)
     readings: list[dict] = field(default_factory=list)
     designs: list[dict] = field(default_factory=list)
+    rejections: list[dict] = field(default_factory=list)
     scores: list[dict] = field(default_factory=list)
+    fold_metrics: list[dict] = field(default_factory=list)
     ranked: list[dict] = field(default_factory=list)
     citations: dict[str, Citation] = field(default_factory=dict)
     stages_present: set[str] = field(default_factory=set)
@@ -76,9 +78,10 @@ def build(store: RunStore, manifest: dict | None = None) -> Index:
             index.rejected.append(
                 {"id": entry["id"], "stage": entry["stage"], "reason": entry["reason"]}
             )
-        if entry["status"] != "succeeded":
+        if entry["status"] == "failed":
             continue
-        index.stages_present.add(entry["stage"])
+        if entry["status"] == "succeeded":
+            index.stages_present.add(entry["stage"])
         for ref in entry["artefacts"]:
             try:
                 record = json.loads(store.read(ref))
@@ -105,6 +108,12 @@ def build(store: RunStore, manifest: dict | None = None) -> Index:
             elif kind == "variant":
                 index.designs.append(record)
                 index.citations.setdefault("design", citation)
+            elif kind == "variant-proposals":
+                index.designs.extend(record.get("proposals", []))
+                index.citations.setdefault("design", citation)
+            elif kind == "variant-rejections":
+                index.rejections.append(record)
+                index.citations.setdefault("rejection", citation)
         if entry["stage"] == "score" and entry["metrics"]:
             index.scores.append({"entry": entry["id"], "metrics": entry["metrics"]})
             index.citations.setdefault(
@@ -116,9 +125,11 @@ def build(store: RunStore, manifest: dict | None = None) -> Index:
                 "rank", Citation(entry["id"], entry["stage"], _producer(entry))
             )
         if entry["stage"] == "fold" and entry["metrics"]:
+            # A fold confidence is not a stability score. Keeping them apart is
+            # what lets the scientist refuse a comparison it cannot make.
             index.citations.setdefault(
                 "fold-metrics", Citation(entry["id"], entry["stage"], _producer(entry))
             )
-            index.scores.append({"entry": entry["id"], "metrics": entry["metrics"]})
+            index.fold_metrics.append({"entry": entry["id"], "metrics": entry["metrics"]})
 
     return index

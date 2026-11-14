@@ -29,6 +29,7 @@ STATIC_FILES = {
     "lib/sonar.mjs": JS,
     "lib/overhead.mjs": JS,
     "lib/scroll.mjs": JS,
+    "lib/tokens.mjs": JS,
     "vendor/three.module.js": JS,
     "data/enzyme.json": "application/json; charset=utf-8",
     "enzyme.png": "image/png",
