@@ -15,15 +15,27 @@ from urllib.parse import unquote, urlsplit
 from sonazyme.api.snapshots import export_snapshot, modified_at, references
 from sonazyme.runs.store import RunStore
 
+JS = "text/javascript; charset=utf-8"
 STATIC_FILES = {
     "index.html": "text/html; charset=utf-8",
     "styles.css": "text/css; charset=utf-8",
     "tokens.css": "text/css; charset=utf-8",
-    "app.mjs": "text/javascript; charset=utf-8",
-    "lib/api.mjs": "text/javascript; charset=utf-8",
-    "lib/data.mjs": "text/javascript; charset=utf-8",
-    "lib/viewer.mjs": "text/javascript; charset=utf-8",
+    "app.mjs": JS,
+    "lib/api.mjs": JS,
+    "lib/data.mjs": JS,
+    "lib/viewer.mjs": JS,
+    "lib/protein.mjs": JS,
+    "lib/pipe.mjs": JS,
+    "lib/sonar.mjs": JS,
+    "lib/overhead.mjs": JS,
+    "lib/scroll.mjs": JS,
+    "vendor/three.module.js": JS,
+    "data/enzyme.json": "application/json; charset=utf-8",
     "enzyme.png": "image/png",
+    "fonts/instrument-serif-400.woff2": "font/woff2",
+    "fonts/geist-400.woff2": "font/woff2",
+    "fonts/geist-500.woff2": "font/woff2",
+    "fonts/geist-mono-400.woff2": "font/woff2",
 }
 SECURITY_HEADERS = {
     "Cache-Control": "no-store",
@@ -31,6 +43,7 @@ SECURITY_HEADERS = {
     "Referrer-Policy": "no-referrer",
     "Content-Security-Policy": (
         "default-src 'self'; script-src 'self'; style-src 'self'; "
+        "font-src 'self'; "
         "img-src 'self' data:; connect-src 'self'; object-src 'none'; "
         "base-uri 'none'; frame-ancestors 'none'"
     ),
