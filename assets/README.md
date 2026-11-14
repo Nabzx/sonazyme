@@ -3,6 +3,7 @@
 | File | What it is |
 | --- | --- |
 | `hero.svg` | the README header: a loop with a biofilm layer, above the seven stages |
+| `architecture.svg` | the whole workflow on one page: sense the loop, design, provenance, show |
 
 ## Still to record
 

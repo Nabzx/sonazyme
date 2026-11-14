@@ -4,6 +4,10 @@ How Sonazyme fits together. The glossary is [CONTEXT.md](../../CONTEXT.md),
 the biology underneath it is [docs/biology/](../biology), and the decisions
 behind the shape are in [docs/adr/](../adr).
 
+<p align="center">
+  <img src="../../assets/architecture.svg" alt="The Sonazyme workflow: a transducer pinging a cooling loop produces a reading, which with a target file feeds the seven stages from sense to explain, every stage writing to one run manifest with its artefacts, served to the dashboard, and a recommendation returning to the loop" width="1000" />
+</p>
+
 ## The shape of the thing
 
 One pipeline, seven stages, one manifest per run.
