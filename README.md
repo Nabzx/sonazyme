@@ -71,14 +71,21 @@ A cooling loop is a sealed box. Nobody can see inside it while it runs, so
 treatment is dosed on a schedule rather than on evidence, and the first sign
 of a problem is usually a performance number drifting.
 
-Ultrasonic and guided-wave methods are already used to find deposits in pipes
-from the outside: a layer on the inner wall changes the impedance at the wall,
-so the echo and the time of flight change with it. Pointed at a loop, that
-gives a map of where the film is thickening, which says where to dose, which
-section to sample, and whether a treatment did anything.
+Ultrasonic methods already do this in industrial water, and the working ones
+measure a prepared surface rather than an arbitrary run of pipe: a membrane
+cell, a side-stream coupon, a heated target. A layer on that surface changes
+the echo and the time of flight, and one commercial analyser claims to
+separate soft biological deposits from hard scale on that basis. Pointed at a
+loop, a sensor like that plus inference across the circuit says where to dose,
+which section to sample, and whether a treatment did anything.
+
+The sourced version of this, with what is published and what is only claimed,
+is in [docs/research/acoustic-feasibility.md](docs/research/acoustic-feasibility.md).
 
 That is the sonar half of the name, and it is the direction the project is
-committed to, not something it has built. None of it exists yet. The hard
+committed to. What exists today is a physics forward model producing simulated
+readings, labelled simulated wherever they appear (ADR-0013). No loop has been
+pinged. The hard
 question is whether the signal can tell a soft water-rich biofilm from hard
 scale or corrosion product, and that question is open:
 [#68](https://github.com/Nabzx/sonazyme/issues/68). The scope is fixed by an
