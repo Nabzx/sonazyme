@@ -67,6 +67,16 @@ an assumption stays visible downstream.
 No model calls. The intelligence here is in the target file, which is data
 ([ADR-0002](../adr/0002-targets-are-data.md)).
 
+**The acoustic front end, planned.** A loop is a sealed box, so `sense` is
+meant to grow a second input: an acoustic survey of the loop, giving a map of
+where fouling is building up, which picks the section a run is about and
+closes the cycle of monitor, design, treat, monitor again. None of it is
+built, its scope is fixed by an ADR first
+([#57](https://github.com/Nabzx/sonazyme/issues/57)), and it inherits the
+rules the rest of the repo runs on: a reading carries its provenance,
+synthetic signals are labelled synthetic wherever they appear, and the model
+behind a fouling estimate retrodicts before anyone trusts a number from it.
+
 ### `chassis`
 
 For each anchor, selects one or more parent enzymes known to cut that bond,

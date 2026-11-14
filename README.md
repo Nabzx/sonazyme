@@ -45,7 +45,7 @@ written down as a research direction, not a claim.
 
 | Stage | What happens | What it writes |
 | --- | --- | --- |
-| `sense` | name the bond that holds the target biofilm together | a target definition and a condition envelope |
+| `sense` | name the bond that holds the target biofilm together, and later, read the loop to find where the film is | a target definition and a condition envelope |
 | `chassis` | pick parent enzymes that cut that bond | candidate sequences with their sources |
 | `design` | propose variants of each parent, via Tamarind Bio | a variant set with the mutations made |
 | `fold` | predict each variant's structure, via Boltz-2 | structures and confidence |
@@ -57,6 +57,28 @@ Every stage appends to one run manifest: inputs, model and version, score,
 artefact path. The dashboard and the agent read the manifest, so anything
 either of them says can be traced back to the run that produced it
 ([ADR-0004](docs/adr/0004-provenance-on-every-number.md)).
+
+## Sensing the loop
+
+A cooling loop is a sealed box. Nobody can see inside it while it runs, so
+treatment is dosed on a schedule rather than on evidence, and the first sign
+of a problem is usually a performance number drifting.
+
+Ultrasonic and guided-wave methods are already used to find deposits in pipes
+from the outside: a layer on the inner wall changes the impedance at the wall,
+so the echo and the time of flight change with it. Pointed at a loop, that
+gives a map of where the film is thickening, which says where to dose, which
+section to sample, and whether a treatment did anything.
+
+That is the sonar half of the name, and it is the direction the project is
+committed to, not something it has built. None of it exists yet. The hard
+question is whether the signal can tell a soft water-rich biofilm from hard
+scale or corrosion product, and that question is open:
+[#68](https://github.com/Nabzx/sonazyme/issues/68). The scope is fixed by an
+ADR before any of it is claimed
+([#57](https://github.com/Nabzx/sonazyme/issues/57)), and until a retrodiction
+case passes, anything shown is labelled as a demonstration of the method
+rather than as a measurement.
 
 ## Targets are data, not code
 
