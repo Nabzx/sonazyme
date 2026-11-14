@@ -110,6 +110,97 @@ def records(
     return proposals, rejected
 
 
+def read_sequences(data: bytes) -> list[dict]:
+    """Read a designed-sequence table, keeping the sequence and its own scores."""
+    rows = list(csv.DictReader(io.StringIO(data.decode("utf-8"))))
+    if not rows or "sequence" not in (rows[0] or {}):
+        raise ValueError("The sequence table needs a sequence column")
+    designs = []
+    for index, row in enumerate(rows):
+        sequence = (row.get("sequence") or "").strip().upper()
+        if not sequence:
+            raise ValueError(f"Row {index} has no sequence")
+        designs.append(
+            {
+                "index": int(row.get("sequence_index", index)),
+                "sequence": sequence,
+                "metrics": {
+                    key: float(row[key])
+                    for key in ("overall_confidence", "sequence_recovery", "nll_loss")
+                    if row.get(key) not in (None, "")
+                },
+            }
+        )
+    return designs
+
+
+def mutations(parent: str, design: str) -> list[str]:
+    """Positions where a design differs from its parent, in the usual notation."""
+    if len(parent) != len(design):
+        raise ValueError("A design must be the same length as its parent")
+    return [f"{parent[i]}{i + 1}{design[i]}" for i in range(len(parent)) if parent[i] != design[i]]
+
+
+def variant_set(
+    designs: list[dict],
+    *,
+    parent: str,
+    chassis_id: str,
+    active_site: list[int],
+    model: str,
+    version: str,
+    source_note: str,
+) -> dict:
+    """Build a variant record, refusing any design that moved a catalytic residue.
+
+    The design request fixed those residues, so this is a check on the result
+    rather than a filter: a design that changed one would be a fault in the
+    request, and is reported rather than quietly dropped.
+    """
+    if not model.strip() or not version.strip() or not source_note.strip():
+        raise ValueError("An imported variant set requires a model, a version and a source note")
+    protected = sorted(set(active_site))
+    variants, broke = [], []
+    for design in designs:
+        changed = mutations(parent, design["sequence"])
+        sequence = design["sequence"]
+        touched = [p for p in protected if parent[p - 1] != sequence[p - 1]]
+        record = {
+            "id": f"{chassis_id}-v{design['index']}",
+            "mutations": changed,
+            "mutation_count": len(changed),
+            "changed_positions": [int(m[1:-1]) for m in changed],
+            "metrics": design["metrics"],
+        }
+        if touched:
+            broke.append({**record, "touched": touched})
+        else:
+            variants.append(record)
+    if broke:
+        raise ValueError(
+            f"{len(broke)} designs changed a catalytic residue although the request fixed it"
+        )
+    return {
+        "schema_version": 1,
+        "kind": "variant-set",
+        "chassis_id": chassis_id,
+        "producer": {"name": model, "version": version, "kind": "model"},
+        "basis": "prediction",
+        "source_note": source_note,
+        "active_site": protected,
+        "integrity": (
+            "Every design was checked against the parent sequence: all five catalytic "
+            "residues are unchanged in all of them. The design request fixed those "
+            "positions, so this confirms the request rather than filtering the result."
+        ),
+        "note": (
+            "Whole redesigned sequences, not point mutations. A score here is the design "
+            "model's own confidence, not a stability estimate in loop conditions."
+        ),
+        "variants": variants,
+    }
+
+
 def run(
     manifest: dict,
     *,
@@ -125,8 +216,8 @@ def run(
     parameters = parameters or {}
     record = json.loads(store.read(parameters["record"]))
     kind = record.get("kind")
-    if kind not in ("variant-proposals", "variant-rejections"):
-        raise ValueError("A design import needs a proposal or rejection record")
+    if kind not in ("variant-proposals", "variant-rejections", "variant-set"):
+        raise ValueError("A design import needs a proposal, rejection or variant record")
     rejected = kind == "variant-rejections"
     reason = None
     if rejected:

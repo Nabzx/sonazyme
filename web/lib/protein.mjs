@@ -156,6 +156,9 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
       camera.position.z = w / h > 0.95 ? 146 : 172;
       rig.position.set(4, w / h > 0.95 ? 3 : 9, 0);
     }
+    // Depth haze follows the camera, so the fold never washes out.
+    scene.fog.near = camera.position.z - 20;
+    scene.fog.far = camera.position.z + 62;
   }
 
   function update(time, dt) {
