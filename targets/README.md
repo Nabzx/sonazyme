@@ -1,56 +1,67 @@
 # Targets
 
-One file per biofilm target. A target is data, not code
-([ADR-0002](../docs/adr/0002-targets-are-data.md)): adding one is adding a
-file, and no stage changes.
+One TOML file per target. Targets are data (ADR-0002). The v1 schema is fixed
+by [ADR-0008](../docs/adr/0008-target-evidence-records.md) and checked by
+`sonazyme.sense.targets.load(path)` or `parse(bytes)`.
 
-There are none yet. The schema settles and the first target lands in M1, and
-nothing is written here before its values have sources, because a target file
-full of plausible numbers is worse than an empty folder.
+## Available target
 
-## What a target file holds
+[psl-literature.toml](psl-literature.toml) is a research target. It names a
+literature matrix anchor while marking the link to an industrial loop as an
+assumption. The bond is tied to the primary paper's cleavage-position
+definition. The operational envelope remains unknown. It
+is usable for loading and chassis provenance integration, not an envelope-aware
+scoring run. No Sonazyme wet-lab result exists.
+
+The evidence and missing inputs are in
+[the target research note](../docs/research/demo-target.md). The corrosion,
+marine and spacecraft targets remain future work.
+
+## Schema v1
+
+The root contains exactly `schema_version = 1`, `[target]`, `[community]`,
+one or more `[[anchor]]` blocks and `[envelope]`.
+
+| Section | Required fields |
+| --- | --- |
+| `target` | `id`, `name`, `summary`, `loop` |
+| `community` | one evidence record whose value is a non-empty list of names |
+| each `anchor` | `component`, `kind`, `bond`, `enzyme_family`, `share` |
+| `envelope` | `temperature_c`, `ph`, `chemistry`, `residence_time_s` |
+
+`id`, `name` and `summary` are editorial metadata. All other fields are
+evidence records. The id uses lowercase letters, digits and separating hyphens.
+
+| Basis | Required fields | Meaning |
+| --- | --- | --- |
+| `literature` | `value`, `source` | Published information, with its scope retained |
+| `guidance` | `value`, `source` | A specification or recommendation, not an observation |
+| `measurement` | `value`, `source` | A cited measurement |
+| `assumption` | `value`, `reason` | A deliberate choice with justification; source optional |
+| `unknown` | `reason`, no `value` | Not established; source optional |
+
+Known records may include a reason describing scope limits. A source is a
+non-empty citation. Validation checks its presence, not the paper's contents.
+A value without a marking or a cited value without a source fails loading.
+Unknown keys fail too, so misspelt fields do not disappear silently.
+
+Loop values are `direct-to-chip`, `cooling-tower`, `heat-exchanger`, `marine`,
+`spacecraft` or `other`. Anchor kinds are `polysaccharide`, `protein` or
+`extracellular-dna`. Component, bond and enzyme family are non-empty text.
+
+Known temperature and pH values are ordered pairs of finite numbers. A known
+residence time is a non-negative number in seconds. A known share is a fraction
+between zero and one. Chemistry is a list of names. A known empty list means
+no listed chemistry; an unknown chemistry has no value at all. The schema does
+not infer concentrations or chemical compatibility from names.
 
 ```toml
-[target]
-id          = "..."     # stable identifier, used in run manifests
-name        = "..."     # human name
-loop        = "..."     # direct-to-chip | cooling-tower | heat-exchanger | other
-summary     = "..."     # two sentences, plain
-
-[community]
-organisms   = [...]     # organism or community, each with a source
-basis       = "..."     # how we know: sample, literature, assumption
-
-[[anchor]]              # one block per component we could cut
-component   = "..."     # the polymer
-kind        = "..."     # polysaccharide | protein | extracellular-dna
-bond        = "..."     # the link an enzyme would cut
-enzyme_family = "..."   # glycoside hydrolase | lyase | protease | dnase
-share       = "..."     # how much of the matrix, if known
-source      = "..."     # citation, or "assumption"
-
-[envelope]
-temperature_c = [..,..] # range
-ph            = [..,..]
-chemistry     = [...]   # what is already in the water
-residence     = "..."   # contact time available to a dosed enzyme
-source        = "..."   # per value where they differ
+[envelope.residence_time_s]
+basis = "unknown"
+reason = "No operator contact-time data."
 ```
 
-## Rules
-
-- **Every value carries a source or is marked `assumption`.** Both are fine.
-  A value with neither is a defect.
-- **An assumption stays visible downstream.** `sense` carries the marking
-  into the run manifest, and the dashboard shows it on screen.
-- **No target asserts what we have not been told.** If an operator has not
-  given us composition data, the target says so.
-
-## Planned
-
-| Target | Status |
-| --- | --- |
-| data-centre direct-to-chip loop, default | M1, blocked on sources |
-| sulfate-reducing community, corrosion case | M1 |
-| marine hull | M7 |
-| spacecraft water loop | M7 |
+The parser supplies no biological defaults. The `sense` stage writes normalised
+JSON retaining every evidence record. A successful load establishes schema
+validity, not readiness for design, scoring or treatment. Each downstream stage
+must reject missing inputs it needs and record which envelope fields it uses.

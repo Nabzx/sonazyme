@@ -1,0 +1,60 @@
+schema_version = 1
+
+[target]
+id = "psl-literature"
+name = "Psl literature target"
+summary = "Research target only. No loop sample, operational envelope or Sonazyme wet-lab result."
+
+[target.loop]
+basis = "assumption"
+value = "direct-to-chip"
+reason = "The intended application from the project brief; no operator or site has been selected."
+
+[community]
+basis = "assumption"
+value = ["Pseudomonas-style community"]
+reason = "A literature-defined matrix example, not a composition measured in industrial water."
+source = "https://doi.org/10.1126/sciadv.1501632"
+
+[[anchor]]
+[anchor.component]
+basis = "literature"
+value = "Psl"
+source = "https://doi.org/10.1126/sciadv.1501632"
+reason = "Evidence concerns laboratory matrix degradation, not prevalence in cooling loops."
+
+[anchor.kind]
+basis = "literature"
+value = "polysaccharide"
+source = "https://doi.org/10.1126/sciadv.1501632"
+
+[anchor.bond]
+basis = "literature"
+value = "Psl beta-D-glucosidic linkage at position IV in Ruijgrok et al. (2025), Figures 1 and 3"
+source = "https://doi.org/10.1021/jacs.4c16806"
+reason = "Cleavage position is defined by the primary figures; a substrate-fragment representation is still open (#52)."
+
+[anchor.enzyme_family]
+basis = "literature"
+value = "glycoside hydrolase"
+source = "https://doi.org/10.1126/sciadv.1501632"
+
+[anchor.share]
+basis = "unknown"
+reason = "No loop sample or matrix composition measurement."
+
+[envelope.temperature_c]
+basis = "unknown"
+reason = "No operator range; a fluid specification ceiling is not a measured exposure range (#6)."
+
+[envelope.ph]
+basis = "unknown"
+reason = "No selected site or fluid; generic guidance is not a site measurement (#6)."
+
+[envelope.chemistry]
+basis = "unknown"
+reason = "No treatment product identities or concentrations supplied by an operator (#6)."
+
+[envelope.residence_time_s]
+basis = "unknown"
+reason = "No hydraulic or film contact-time data (#6)."

@@ -8,9 +8,39 @@ file (ADR-0002).
 
 from __future__ import annotations
 
-from sonazyme.core import stage_not_built
+import json
+from uuid import uuid4
+
+from sonazyme.core.manifest import append
+from sonazyme.runs.store import RunStore
+from sonazyme.sense.targets import parse
+
+PRODUCER = {"name": "sonazyme.sense", "version": "1", "kind": "code"}
 
 
-def run(manifest: object) -> object:
-    """Run the sense stage over a run manifest, returning the longer manifest."""
-    raise stage_not_built("sense")
+def run(
+    manifest: dict,
+    *,
+    store: RunStore,
+    parameters: dict | None = None,
+    inputs: list[str] | None = None,
+) -> dict:
+    """Append the normalised target without converting assumptions into evidence."""
+    if parameters:
+        raise ValueError("sense v1 has no configurable parameters")
+    target = parse(store.read(manifest["target"]))
+    ref = store.put((json.dumps(target, indent=2, allow_nan=False) + "\n").encode())
+    return append(
+        manifest,
+        {
+            "id": f"sense-{uuid4().hex}",
+            "stage": "sense",
+            "status": "succeeded",
+            "producer": PRODUCER,
+            "inputs": inputs or [],
+            "parameters": {},
+            "metrics": [],
+            "artefacts": [ref],
+            "reason": None,
+        },
+    )
