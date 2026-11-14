@@ -46,4 +46,5 @@ label "regression"      "e11d21" "Worked in an earlier tagged release"
 label "pending-release" "ededed" "Merged; closes when its release is tagged"
 
 label "pitch"        "e99695" "The pitch, the script and the submission"
+label "polish"       "ffd33d" "Visual craft: look, motion, lighting, detail"
 label "dependencies" "0366d6" "Dependency updates"

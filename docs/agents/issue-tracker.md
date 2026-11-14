@@ -51,6 +51,7 @@ Every issue carries exactly one of these, and the matching milestone.
 - `adr`: the issue needs or updates an ADR.
 - `documentation`: docs only.
 - `pitch`: the pitch, the script and the submission.
+- `polish`: visual craft. Look, motion, lighting, detail.
 
 **Wayfinder**
 
