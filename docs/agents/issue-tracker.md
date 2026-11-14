@@ -44,10 +44,13 @@ Every issue carries exactly one of these, and the matching milestone.
 - `area:explain`: the scientist agent.
 - `area:web`: Sonazyme Lab and the API.
 - `area:bio`: the biology docs.
+- `area:acoustic`: acoustic sensing and the sonar front end.
+- `area:orchestration`: the Claude orchestrator and Adaption fine-tuning.
 - `targets`: target files and the target schema.
 - `retrodiction`: retrodiction cases and reference data.
 - `adr`: the issue needs or updates an ADR.
 - `documentation`: docs only.
+- `pitch`: the pitch, the script and the submission.
 
 **Wayfinder**
 
