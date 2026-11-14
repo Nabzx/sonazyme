@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "kind": "chassis",
+  "id": "pslg-31-442",
+  "name": "PslG natural segment, reference residues 31 to 442",
+  "selection_reason": "Published extracellular Psl degradation and structural catalytic evidence. Selection does not establish loop stability or activity of any design.",
+  "design_ready": false,
+  "anchor": {
+    "component": "Psl",
+    "bond": "Psl beta-D-glucosidic linkage at position IV in Ruijgrok et al. (2025), Figures 1 and 3",
+    "source": "https://doi.org/10.1021/jacs.4c16806"
+  },
+  "sequence": {
+    "value": "EIQVLKAPRAVVWKDFLGVNAQFLWFSPERYNKQIDRLQDLGLEWVRLDLHWDRLETAEDQYQLASLDQLVKDLEARQLKSVFYLVGSARFITTAPFYSPFQDQYPPRDPEVFARRMAMLSQRYPSVAAWQVWNEPNLIGFWRPKADPEGYAKLLQASTIALRMVDPEKPVVSAGMAFFSEMPDGRTMFDALGHLGVESLGTIATYHPYTQLPEGNYPWNLDFVSHANQINRALRNAGVPAIWSTEWGWSAYKGPKELQDIIGVEGQADYVLRRLALMSALDYDRIFLFTLSDLDQRASVRDRDYGLLDLDANPKPVYLALQRFLKVTGPKLRPADPPVTEDLPDGSFSIGWTREDGRNVWLFWSARGGNVRLPKLKEATLHDPLSGKVTPLSGSDGLEVPVKSSLQMLVWE",
+    "sha256": "dd7d29676a8f0d9ccf8614484b662d98929c25a66efb4300ccc729bb1fc7b69a",
+    "source": "https://www.rcsb.org/fasta/entry/5BX9/display",
+    "mapping": {
+      "reference": "UniProt Q9I1N2",
+      "reference_start": 31,
+      "reference_end": 442,
+      "source": "https://data.rcsb.org/rest/v1/core/polymer_entity/5BX9/1",
+      "method": "RCSB SIFTS alignment: entity positions 5 to 416 map to reference positions 31 to 442. Remove GSHM at entity positions 1 to 4; retain the natural 412-residue segment."
+    },
+    "source_fasta_sha256": "e996fb57015c2bf78aea97f7e2a2f23aad4c4773179701a4890fa88a0c883f16",
+    "retrieved_on": "2026-11-14"
+  },
+  "active_site": {
+    "source": "https://doi.org/10.1074/jbc.M115.674929",
+    "scope": "Catalytic residues only. Complete substrate-binding groove exclusion is not yet sourced; design_ready remains false.",
+    "residues": [
+      {
+        "position": 135,
+        "reference_position": 165,
+        "amino_acid": "E",
+        "atoms": [
+          "N",
+          "CA",
+          "C",
+          "O",
+          "CB",
+          "CG",
+          "CD",
+          "OE1",
+          "OE2"
+        ]
+      },
+      {
+        "position": 246,
+        "reference_position": 276,
+        "amino_acid": "E",
+        "atoms": [
+          "N",
+          "CA",
+          "C",
+          "O",
+          "CB",
+          "CG",
+          "CD",
+          "OE1",
+          "OE2"
+        ]
+      }
+    ]
+  },
+  "limits": [
+    "No Sonazyme wet-lab result.",
+    "No baseline stability prediction or Boltz-2 fold has been run.",
+    "A catalytic-core geometry check is not evidence of activity."
+  ]
+}

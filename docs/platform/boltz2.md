@@ -2,6 +2,11 @@
 
 **Stage:** `fold`
 
+The [local wrapper and artefact contract](../architecture/folding-and-integrity.md)
+are implemented. They have protocol checks using synthetic outputs, not a
+passing real inference run. Boltz compute and checkpoint provisioning remain
+external. No Sonazyme model prediction or wet-lab result exists yet.
+
 ## What we use it for
 
 Predicting a three-dimensional structure for each variant, with confidence,

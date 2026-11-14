@@ -4,6 +4,9 @@ Runs the integrity check first and rejects any variant whose active-site
 geometry moved (ADR-0005), then estimates how well the survivors hold their
 fold in the envelope. A scoring model is trusted only after it retrodicts
 published measurements. See docs/validation/README.md.
+
+The integrity helper is implemented in score.integrity. The stability stage
+and its integration with that helper remain unbuilt here.
 """
 
 from __future__ import annotations
