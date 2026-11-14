@@ -43,17 +43,20 @@ model beside it.
 
 ## The milestones
 
-| Milestone | Goal | Tag |
-| --- | --- | --- |
-| Demo | The five screens from one real run | v0.1.0 |
-| M0 | The scaffold: decisions, glossary, biology, skeleton | v0.0.1 |
-| M1 | The target: schema, default target, envelope | v0.0.2 |
-| M2 | The chassis: parent enzymes with sources, baseline fold | v0.0.3 |
-| M3 | The loop: variants from Tamarind, folds from Boltz-2, one manifest | v0.0.4 |
-| M4 | The score: stability in the envelope, integrity check, retrodiction | v0.0.5 |
-| M5 | The shortlist: ranking, the trade-off front, the dashboard on real runs | v0.0.6 |
-| M6 | The scientist: answers grounded in artefacts, refusals when ungrounded | v0.0.7 |
-| M7 | Beyond the data centre: a second target and a second envelope | v0.0.8 |
+Every milestone is a kept-open map issue with its child tickets hanging off
+it. The frontier is the open children with no open blocker.
+
+| Milestone | Goal | Map | Tag |
+| --- | --- | --- | --- |
+| Demo | The five screens from one real run | [#2](https://github.com/Nabzx/sonazyme/issues/2) | v0.1.0 |
+| M0 | The scaffold: decisions, glossary, biology, skeleton | [#3](https://github.com/Nabzx/sonazyme/issues/3) | v0.0.1 |
+| M1 | The target: schema, default target, envelope | [#4](https://github.com/Nabzx/sonazyme/issues/4) | v0.0.2 |
+| M2 | The chassis: parent enzymes with sources, baseline fold | not filed | v0.0.3 |
+| M3 | The loop: variants from Tamarind, folds from Boltz-2, one manifest | not filed | v0.0.4 |
+| M4 | The score: stability in the envelope, integrity check, retrodiction | not filed | v0.0.5 |
+| M5 | The shortlist: ranking, the trade-off front, the dashboard on real runs | not filed | v0.0.6 |
+| M6 | The scientist: answers grounded in artefacts, refusals when ungrounded | not filed | v0.0.7 |
+| M7 | Beyond the data centre: a second target and a second envelope | not filed | v0.0.8 |
 
 ### M0, the scaffold
 
