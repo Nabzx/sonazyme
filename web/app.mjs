@@ -308,6 +308,74 @@ function renderBeforeAfter(loop, before, after) {
   }
 }
 
+/* ------------------------------------------------------- the scientist */
+// Answers are read from the explain artefact: the dashboard composes nothing
+// and asks nothing at display time. A refusal is rendered as deliberately as
+// an answer, because the refusal is the point (#12, #47, #95).
+
+function renderAnswer(answer) {
+  const host = $("answer");
+  host.replaceChildren();
+  const state = el("span", "answer__state");
+  state.dataset.grounded = String(Boolean(answer.grounded));
+  state.textContent = answer.grounded
+    ? `grounded · ${answer.confidence || "recorded"}`
+    : "not in this run";
+  host.append(state, el("p", "answer__text", answer.text));
+
+  if (answer.steps?.length) {
+    const steps = el("div", "answer__steps");
+    for (const step of answer.steps) {
+      const item = el("div", "answer__step");
+      item.append(el("div", null, step.step));
+      item.append(el("em", null, `${step.settles} · ${step.issue}`));
+      steps.append(item);
+    }
+    host.append(steps);
+  }
+
+  if (!answer.grounded && answer.missing?.length) {
+    host.append(el("p", "answer__missing", `Missing: ${answer.missing.join(", ")}`));
+  }
+  if (answer.citations?.length) {
+    const list = el("div", "answer__citations");
+    for (const citation of answer.citations) {
+      const row = el("div", "citation");
+      row.append(el("span", "citation__stage", citation.stage));
+      row.append(el("span", null, citation.producer));
+      if (citation.artefact_sha256) {
+        row.append(el("span", null, `artefact ${citation.artefact_sha256.slice(0, 12)}`));
+      }
+      list.append(row);
+    }
+    host.append(list);
+  }
+}
+
+function renderScientist(explanation) {
+  const asks = $("asks");
+  asks.replaceChildren();
+  if (!explanation) {
+    $("answer").replaceChildren(
+      el("p", "empty",
+        "No explanation in this run. Run the explain stage and the scientist's answers, and its refusals, appear here."),
+    );
+    return;
+  }
+  explanation.answers.forEach((answer, position) => {
+    const button = el("button", "ask", answer.question);
+    button.type = "button";
+    button.dataset.on = String(position === 0);
+    button.addEventListener("click", () => {
+      for (const other of asks.children) other.dataset.on = "false";
+      button.dataset.on = "true";
+      renderAnswer(answer);
+    });
+    asks.append(button);
+  });
+  renderAnswer(explanation.answers[0]);
+}
+
 /* -------------------------------------------------------------- variants */
 // Designs as the run recorded them. A rejected variant stays visible with its
 // reason, because a search that only shows winners is not showing a search.
@@ -510,6 +578,20 @@ async function renderRun() {
       // A reading that cannot be verified is simply not shown.
     }
   }
+  // The scientist's answers, as the explain stage recorded them.
+  const explained = [...manifest.entries]
+    .reverse()
+    .find(entry => entry.stage === "explain" && entry.status === "succeeded" && entry.artefacts.length);
+  let explanation = null;
+  if (explained) {
+    try {
+      explanation = await source.json(explained.artefacts[0]);
+    } catch {
+      explanation = null;
+    }
+  }
+  renderScientist(explanation);
+
   const loopMap = surveys.length ? surveys[0].parameters.loop : null;
   renderLoopMap(loopMap, readings[0]?.record);
   renderBeforeAfter(loopMap, readings[0]?.record, readings[1]?.record);

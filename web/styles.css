@@ -617,3 +617,64 @@ button:focus-visible { outline: 2px solid var(--cobalt-hydro); outline-offset: 2
 .beforeafter__value { font-family: var(--mono); font-size: var(--size-micro); }
 .beforeafter__arrow { color: var(--ink-faint); }
 .beforeafter__value--after { color: var(--teal-protein); }
+
+
+/* -------------------------------------------- the scientist (#47, #95) */
+
+.asks { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s4); }
+
+.ask {
+  font-size: var(--size-small);
+  padding: var(--s1) var(--s3);
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card-surface);
+  color: var(--ink-muted);
+}
+
+.ask[data-on="true"] {
+  border-color: var(--cobalt-hydro);
+  color: var(--cobalt-hydro);
+  background: var(--cobalt-tint);
+}
+
+.answer { font-size: var(--size-small); }
+.answer__text { color: var(--ink); }
+
+.answer__state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  font-family: var(--mono);
+  font-size: var(--size-micro);
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+  margin-bottom: var(--s3);
+}
+
+.answer__state[data-grounded="false"] { color: var(--biofilm-ochre); }
+.answer__state[data-grounded="true"] { color: var(--teal-protein); }
+
+.answer__citations {
+  margin-top: var(--s4);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.citation {
+  font-family: var(--mono);
+  font-size: var(--size-micro);
+  color: var(--ink-muted);
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+}
+
+.citation__stage { color: var(--ink); }
+.answer__missing { color: var(--biofilm-ochre); font-size: var(--size-micro); margin-top: var(--s3); }
+.answer__steps { margin-top: var(--s3); display: flex; flex-direction: column; gap: var(--s3); }
+.answer__step { padding-left: var(--s4); border-left: 2px solid var(--cobalt-tint); }
+.answer__step em { font-style: normal; color: var(--ink-faint); font-family: var(--mono); font-size: var(--size-micro); }
