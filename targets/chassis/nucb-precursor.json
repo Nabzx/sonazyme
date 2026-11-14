@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "kind": "chassis",
+  "id": "nucb-precursor",
+  "name": "NucB, biofilm-degrading endonuclease",
+  "selection_reason": "A secreted bacterial DNase reported to disperse biofilms of Gram-positive and Gram-negative species by degrading matrix DNA. Selection does not establish loop stability or activity of any design.",
+  "design_ready": false,
+  "anchor": {
+    "component": "extracellular DNA",
+    "bond": "phosphodiester backbone of matrix DNA, cut non-specifically by a metal-dependent endonuclease",
+    "source": "https://doi.org/10.1371/journal.pone.0014029"
+  },
+  "sequence": {
+    "value": "MIKKWAVHLLFSALVLLGLSGGAAYSPQHAEGAARYDDVLYFPASRYPETGAHISDAIKAGHADVCTIERSGADKRRQESLKGIPTKPGFDRDEWPMAMCEEGGKGASVRYVSSSDNRGAGSWVGNRLNGYADGTRILFIVQ",
+    "sha256": "5ce46bb493dbedbebac11e8f358ab1405919032bade046c66360b8b6c7ca89a5",
+    "source": "docs/result-NucB_Biofilm_DNase/metrics.csv, the sequence folded in this repository's Boltz 2.2.1 run",
+    "mapping": {
+      "reference": "Bl_NucB numbering as used in Basle et al. (2018)",
+      "reference_start": 1,
+      "reference_end": 142,
+      "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5758888/",
+      "method": "Checked rather than assumed. Of every alignment offset from 0 to 59, exactly one places all five cited catalytic residues on the matching amino acid in this sequence, and that offset is zero. So His53, Asp93, Glu94, Ser108 and Asn117 sit at those same positions here."
+    },
+    "retrieved_on": "2026-11-14"
+  },
+  "active_site": {
+    "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5758888/",
+    "scope": "The five residues named as catalytic by Basle et al. (2018), four of them supported by mutants that abolished activity. The DNA-binding surface around them is not sourced, so design_ready remains false. Arg77 and Arg92 are proposed to stabilise the transition state but were not mutated in that study, so they are left out here.",
+    "residues": [
+      {
+        "position": 53,
+        "reference_position": 53,
+        "amino_acid": "H",
+        "atoms": [
+          "N",
+          "CA",
+          "C",
+          "O",
+          "CB",
+          "CG",
+          "ND1",
+          "CD2",
+          "CE1",
+          "NE2"
+        ],
+        "evidence": "Proposed catalytic triad with Asp93 and Ser108 through a hydrogen-bond network. The equivalent B. subtilis residue H47A abolished activity."
+      },
+      {
+        "position": 93,
+        "reference_position": 93,
+        "amino_acid": "D",
+        "atoms": [
+          "N",
+          "CA",
+          "C",
+          "O",
+          "CB",
+          "CG",
+          "OD1",
+          "OD2"
+        ],
+        "evidence": "Coordinates the catalytic magnesium. D93N retained under 1 per cent of wild-type activity."
+      },
+      {
+        "position": 94,
+        "reference_position": 94,
+        "amino_acid": "E",
+        "atoms": [
+          "N",
+          "CA",
+          "C",
+          "O",
+          "CB",
+          "CG",
+          "CD",
+          "OE1",
+          "OE2"
+        ],
+        "evidence": "Takes the place of the general-base histidine of His-Me finger nucleases. The equivalent E88A abolished activity."
+      },
+      {
+        "position": 108,
+        "reference_position": 108,
+        "amino_acid": "S",
+        "atoms": [
+          "N",
+          "CA",
+          "C",
+          "O",
+          "CB",
+          "OG"
+        ],
+        "evidence": "Proposed third member of the catalytic triad."
+      },
+      {
+        "position": 117,
+        "reference_position": 117,
+        "amino_acid": "N",
+        "atoms": [
+          "N",
+          "CA",
+          "C",
+          "O",
+          "CB",
+          "CG",
+          "OD1",
+          "ND2"
+        ],
+        "evidence": "Chelates the catalytic metal. The equivalent N111A abolished activity."
+      }
+    ]
+  },
+  "metal": {
+    "ion": "Mg2+",
+    "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5758888/",
+    "note": "No metal was bound in the 5OMT crystal structure; the coordination is inferred by the authors from homology."
+  },
+  "structures": [
+    {
+      "id": "5OMT",
+      "note": "Crystal structure at 1.35 A",
+      "source": "https://www.rcsb.org/structure/5OMT"
+    }
+  ]
+}
