@@ -12,9 +12,18 @@ The scaffold milestone. Updated as tickets close.
 - `docs/design/dashboard.md`, the five screens.
 - Package skeleton: seven stages, each naming the milestone that builds it.
 
+## Since the scaffold (local, unreleased)
+
+- A research-only Psl target, evidence-bearing loader, manifest store and
+  single-writer runner are implemented. `sense` can record a target.
+- The sourced PslG registry and `chassis` selection are implemented. A baseline
+  Boltz wrapper and policy-driven integrity helper pass synthetic software
+  checks. No real model prediction has run. Full binding-site exclusion and
+  the biological integrity tolerance remain unresolved.
+
 ## Not done
 
-- No target file has been written, so no run has been attempted.
+- No end-to-end design run has been attempted.
 - No external service has been called from this repo.
 - No retrodiction case exists, so no scoring model is trusted yet.
 - `web/` is a specification, not an app.

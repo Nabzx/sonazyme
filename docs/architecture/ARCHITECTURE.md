@@ -84,9 +84,10 @@ behind a fouling estimate retrodicts before anyone trusts a number from it.
 ### `chassis`
 
 For each anchor, selects one or more parent enzymes known to cut that bond,
-with sequence, source and a defined active site. Records why each was chosen,
-and folds each once to give the baseline structure and the baseline stability
-estimate that redesigns have to beat.
+with sequence, source and an explicitly scoped active-site definition. Records
+why each was chosen. Baseline folding and scoring are separate stage calls
+over that record, not imports or hidden model calls inside `chassis`
+([ADR-0010](../adr/0010-chassis-fold-and-integrity-contracts.md)).
 
 ### `design`
 

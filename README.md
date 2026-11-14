@@ -185,12 +185,30 @@ docs/
 
 ```bash
 git clone https://github.com/Nabzx/sonazyme && cd sonazyme
-pip install -e ".[dev]"
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
 pytest
 ```
 
 That installs the skeleton and runs its tests. Any stage that is not built yet
 raises `NotBuiltError` naming the milestone that will build it.
+
+The shared [manifest writer and artefact store](docs/architecture/manifest-v1.md)
+are implemented. The initial
+[target research](docs/research/demo-target.md) records a recommendation and
+the missing loop data, not an experimental result.
+
+The `sense` stage now loads evidence-bearing TOML targets. The
+[research target](targets/psl-literature.toml) preserves unknown envelope values;
+it is not ready for scoring. The [stage runner](docs/architecture/runner.md)
+records attempts and resumes from matching saved successes without model calls.
+The [chassis registry](targets/chassis/README.md) now records a sourced PslG
+construct and its residue mapping. Its complete binding-site exclusion remains
+unresolved, so design is blocked. The [Boltz wrapper and integrity helper](docs/architecture/folding-and-integrity.md)
+are implemented and tested with software fixtures. No real structure prediction
+or biological geometry comparison has run. Design, stability scoring, ranking
+and explanation remain unbuilt here.
 
 ## How the work is organised
 
