@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Node, for the dashboard
+node_modules/
+.next/
+web/dist/
+
+# Runs, artefacts and fetched reference data: generated, never committed.
+# The one cached demo run is the exception and is committed under web/fixtures.
+runs/
+validation/data/external/
+*.cif
+*.pdb
+*.npz
+*.ckpt
+*.pt
+
+# Secrets
+.env
+.env.*
+
+# Editors and OS
+.DS_Store
+.idea/
+.vscode/
+
+# Agent worktrees and local agent state
+.claude/
