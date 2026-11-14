@@ -83,9 +83,25 @@ intended workflow, not a readout, and it says so.
 
 ## Visual language
 
-- Dark, instrument-panel feel. `assets/hero.svg` sets the palette.
-- Three colours with fixed meanings across every act: prediction, active site,
-  changed region. They never swap.
+Clean biotech lab, light mode. The register is a modern AI drug-discovery
+platform: crisp, clinical, confident. Settled in #36, applied in #99.
+
+| Token | Hex | Use |
+| --- | --- | --- |
+| Sterile White | `#F8FAFC` | the page background |
+| Card Surface | `#FFFFFF` | panels and cards, bordered `#E2E8F0` |
+| Cobalt Hydro | `#0284C7` | the brand. Water, flow, engineering trust |
+| Teal Protein | `#0D9488` | molecular structure and enzymatic action |
+| Biofilm Ochre | `#EA580C` | fouling, warnings, where the problem is |
+| Deep Slate Ink | `#0F172A` | primary text |
+
+- Three colours with fixed meanings across every act: active site in Teal
+  Protein, changed region in Cobalt Hydro, fouling and risk in Biofilm Ochre.
+  They never swap.
+- A prediction is marked by its provenance tag rather than by a colour, so
+  colour stays reserved for the three meanings above.
+- Elevation on white comes from a hairline border and a soft shadow, never
+  from a heavier fill. No glow, no bloom.
 - Every tile carries its model and version in small type. No exceptions, no
   hover to reveal.
 - An assumed value is marked assumed wherever it appears, and an illustrative
