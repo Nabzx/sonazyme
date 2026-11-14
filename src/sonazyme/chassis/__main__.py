@@ -23,11 +23,18 @@ def main(argv: list[str] | None = None) -> None:
         record = parse(data)
         store = RunStore(args.run_dir)
         manifest = store.load()
+        # The sense stage now carries two kinds of entry: the normalised target
+        # and simulated loop surveys (ADR-0013). A chassis is selected against
+        # the target, so the survey entries are not candidates here.
         senses = [
-            e for e in manifest["entries"] if e["stage"] == "sense" and e["status"] == "succeeded"
+            e
+            for e in manifest["entries"]
+            if e["stage"] == "sense"
+            and e["status"] == "succeeded"
+            and e["producer"]["name"] == "sonazyme.sense"
         ]
         if not senses:
-            raise ValueError("Run sense first in this run directory")
+            raise ValueError("Run the target through sense first in this run directory")
         # A sealed run can still reuse an existing snapshot and stage success.
         if manifest["status"] == "finished":
             digest = hashlib.sha256(data).hexdigest()

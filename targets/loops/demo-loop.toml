@@ -1,0 +1,56 @@
+# A loop map for the demonstration. This is not a real site.
+#
+# Geometry is plausible for a direct-to-chip arrangement and is an assumption
+# throughout: no operator has supplied a layout, and nothing here has been
+# measured. Readings taken against this map are simulated (ADR-0013).
+
+schema_version = 1
+kind = "loop"
+id = "demo-loop"
+name = "Demonstration direct-to-chip loop"
+basis_note = "Assumed layout for the demonstration. No site, no operator, no measurement."
+
+[[section]]
+id = "cold-plate-a"
+role = "cold plate, rack A"
+material = "copper"
+bore_mm = 6.0
+wall_mm = 0.8
+length_m = 1.2
+sensor = true
+
+[[section]]
+id = "rack-return-a"
+role = "rack return header"
+material = "stainless-steel"
+bore_mm = 25.0
+wall_mm = 1.6
+length_m = 4.0
+sensor = true
+
+[[section]]
+id = "riser"
+role = "riser to the heat exchanger"
+material = "stainless-steel"
+bore_mm = 50.0
+wall_mm = 2.0
+length_m = 18.0
+sensor = false
+
+[[section]]
+id = "exchanger-inlet"
+role = "heat exchanger inlet"
+material = "stainless-steel"
+bore_mm = 50.0
+wall_mm = 2.0
+length_m = 2.5
+sensor = true
+
+[[section]]
+id = "facility-return"
+role = "facility side return"
+material = "carbon-steel"
+bore_mm = 80.0
+wall_mm = 3.2
+length_m = 24.0
+sensor = true
