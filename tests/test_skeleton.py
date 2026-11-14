@@ -19,7 +19,8 @@ def test_every_layer_imports_and_says_what_it_is(name):
 
 
 @pytest.mark.parametrize(
-    "stage", [stage for stage in STAGES if stage not in {"sense", "chassis", "fold"}]
+    "stage",
+    [stage for stage in STAGES if stage not in {"sense", "chassis", "fold", "explain"}],
 )
 def test_unbuilt_stages_name_their_milestone(stage):
     module = importlib.import_module(f"sonazyme.{stage}")
