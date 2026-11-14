@@ -22,6 +22,8 @@ canvas { display: block; }
 
 .wrap { width: min(1180px, 100% - var(--s8)); margin-inline: auto; }
 
+:where(section[id]) { scroll-margin-top: var(--s16); }
+
 /* ---------------------------------------------------------------- header */
 
 .masthead {
@@ -173,11 +175,11 @@ canvas { display: block; }
 .solution__lines {
   font-size: var(--size-title);
   letter-spacing: -0.02em;
-  max-width: 28ch;
+  max-width: 56ch;
   font-weight: 600;
 }
 
-.solution__lines em { font-style: normal; color: var(--cobalt-hydro); }
+.solution__lines em { display: block; font-style: normal; color: var(--cobalt-hydro); }
 .solution__lines em + em { color: var(--teal-protein); }
 
 .solution__note {
@@ -399,4 +401,142 @@ button:focus-visible { outline: 2px solid var(--cobalt-hydro); outline-offset: 2
   .lab__frame { grid-template-columns: 1fr; }
   .stage { min-height: 380px; }
   .masthead nav { display: none; }
+}
+
+/* ------------------------------------------------- act 2 walkthrough (#87) */
+
+.steps {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  margin-top: var(--s8);
+  flex-wrap: wrap;
+}
+
+.steps__list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  min-width: min(100%, 560px);
+}
+
+.step {
+  display: grid;
+  gap: var(--s1);
+  width: 100%;
+  text-align: left;
+  padding: var(--s3) var(--s4);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--card-surface);
+  transition: border-color var(--medium) var(--ease), box-shadow var(--medium) var(--ease),
+    transform var(--medium) var(--ease);
+}
+
+.step__index {
+  font-family: var(--mono);
+  font-size: var(--size-micro);
+  letter-spacing: var(--tracking-micro);
+  color: var(--ink-faint);
+}
+
+.step__name { font-weight: 600; letter-spacing: -0.01em; }
+.step__note { font-size: var(--size-small); color: var(--ink-muted); }
+
+.step[data-on="true"] {
+  border-color: var(--cobalt-hydro);
+  box-shadow: var(--shadow-raised);
+  transform: translateY(-2px);
+}
+
+.step[data-on="true"] .step__index { color: var(--cobalt-hydro); }
+.step[data-done="true"] .step__index { color: var(--teal-protein); }
+
+.steps__controls { display: flex; gap: var(--s2); margin-left: auto; }
+
+/* the stage caption, which says what this step is showing */
+
+.stage__caption {
+  position: absolute;
+  left: var(--s6);
+  right: var(--s6);
+  bottom: var(--s6);
+  padding: var(--s4);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card-surface) 92%, transparent);
+  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-rest);
+  transition: opacity var(--medium) var(--ease), transform var(--medium) var(--ease);
+}
+
+.stage__caption strong { display: block; letter-spacing: -0.01em; }
+.stage__caption p { font-size: var(--size-small); color: var(--ink-muted); margin-top: var(--s2); }
+.stage__caption[data-swapping="true"] { opacity: 0; transform: translateY(6px); }
+
+/* ------------------------------------------------------ variants (#45) */
+
+.variants { display: flex; flex-direction: column; }
+
+.variant {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: var(--s3);
+  padding-block: var(--s3);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--size-small);
+}
+
+.variant:last-child { border-bottom: 0; }
+.variant__mutations { font-family: var(--mono); font-size: var(--size-micro); }
+.variant[data-status="rejected"] { color: var(--ink-faint); }
+.variant[data-status="rejected"] .variant__mutations { text-decoration: line-through; }
+.variant__reason { grid-column: 2 / -1; color: var(--biofilm-ochre); font-size: var(--size-micro); }
+.empty { color: var(--ink-muted); font-size: var(--size-small); }
+
+/* ------------------------------------------------------ loading (#107) */
+
+.skeleton {
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--border) 0%, var(--sterile-white) 50%, var(--border) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s var(--ease) infinite;
+  margin-block: var(--s3);
+}
+
+.skeleton:nth-child(2) { width: 82%; }
+.skeleton:nth-child(3) { width: 64%; }
+
+@keyframes shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}
+
+/* ------------------------------------------- pinning and transitions (#37, #106) */
+
+.sticky { position: sticky; top: calc(var(--s16) + var(--s4)); }
+
+.story__grid > div { padding-block: var(--s4); }
+
+/* micro-detail (#108) */
+
+.ledger__item { transition: background var(--fast) var(--ease); border-radius: var(--radius-sm); }
+.ledger__item:hover { background: var(--sterile-white); }
+.stage__viewport canvas { cursor: grab; }
+.stage__viewport canvas:active { cursor: grabbing; }
+.tag[title] { cursor: help; }
+
+@media (max-width: 900px) {
+  .sticky { position: static; }
+  .steps__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

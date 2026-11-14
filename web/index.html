@@ -130,7 +130,7 @@
         same anchor points within days.
       </p>
     </div>
-    <figure class="panel">
+    <figure class="panel sticky">
       <svg class="scene" id="problem-scene" viewBox="0 0 620 300" role="img"
            aria-label="A pipe wall in cross-section: a biofilm layer grows, a biocide dose clears the surface cells, the matrix remains, and the film returns.">
         <rect x="40" y="60" width="540" height="180" rx="6" fill="url(#water)" stroke="var(--border)" />
@@ -170,7 +170,7 @@
         is, and whether a treatment did anything.
       </p>
     </div>
-    <figure class="panel">
+    <figure class="panel sticky">
       <svg class="scene" viewBox="0 0 620 300" role="img"
            aria-label="A transducer on the outside of a pipe sends pulses that return changed by the layer inside.">
         <rect x="40" y="90" width="540" height="120" rx="6" fill="url(#water)" stroke="var(--border)" />
@@ -202,12 +202,12 @@
   </div>
 </section>
 
-<section class="solution" id="solution">
+<section class="solution reveal" id="solution">
   <div class="wrap">
     <p class="eyebrow">The approach</p>
     <p class="solution__lines">
-      <em>Sonar finds the film.</em><br />
-      <em>Designed enzymes take it apart.</em>
+      <em>We use sonar to detect biofilm build-up in cooling pipes,</em>
+      <em>then release enzymes designed to break it down.</em>
     </p>
     <p class="solution__note">
       Off-the-shelf cleaning enzymes unfold in a hot, alkaline loop and stop working.
@@ -218,7 +218,7 @@
   </div>
 </section>
 
-<section class="story wrap">
+<section class="story wrap reveal">
   <p class="eyebrow">The market</p>
   <h2>Cooling is the cost nobody can switch off.</h2>
   <div class="stats">
@@ -247,7 +247,7 @@
 <!-- ============================ act 2: the simulation ============================ -->
 
 <section class="lab wrap" id="lab">
-  <div class="lab__head">
+  <div class="lab__head reveal">
     <div>
       <p class="eyebrow">The lab</p>
       <h2>Designing an enzyme that does not unfold in the loop.</h2>
@@ -255,6 +255,28 @@
         Everything in this panel is read from a run: its inputs, the model behind each
         number, and the artefacts each stage wrote. Nothing is computed here.
       </p>
+    </div>
+  </div>
+
+  <div class="steps" role="group" aria-label="Walkthrough">
+    <ol class="steps__list" id="steps">
+      <li><button type="button" class="step" data-step="0">
+        <span class="step__index">01</span><span class="step__name">The loop</span>
+        <span class="step__note">what we are treating</span></button></li>
+      <li><button type="button" class="step" data-step="1">
+        <span class="step__index">02</span><span class="step__name">The chassis</span>
+        <span class="step__note">the enzyme we start from</span></button></li>
+      <li><button type="button" class="step" data-step="2">
+        <span class="step__index">03</span><span class="step__name">The designs</span>
+        <span class="step__note">variants, scored</span></button></li>
+      <li><button type="button" class="step" data-step="3">
+        <span class="step__index">04</span><span class="step__name">The pick</span>
+        <span class="step__note">and what it trades</span></button></li>
+    </ol>
+    <div class="steps__controls">
+      <button type="button" id="step-back" aria-label="Previous step">&larr;</button>
+      <button type="button" id="step-play" data-playing="false">Play</button>
+      <button type="button" id="step-next" aria-label="Next step">&rarr;</button>
     </div>
   </div>
 
@@ -282,11 +304,19 @@
     <div class="readout">
       <div class="card">
         <h3>Run</h3>
-        <div class="rows" id="run-rows"></div>
+        <div class="rows" id="run-rows">
+          <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+        </div>
       </div>
       <div class="card">
         <h3>Stages</h3>
-        <div class="ledger" id="ledger"></div>
+        <div class="ledger" id="ledger">
+          <div class="skeleton"></div><div class="skeleton"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Designs</h3>
+        <div class="variants" id="variants"></div>
       </div>
       <div class="card">
         <h3>Shortlist</h3>

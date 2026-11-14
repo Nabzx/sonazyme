@@ -137,6 +137,8 @@ function revealOnScroll() {
     { rootMargin: "-10% 0px -10% 0px" },
   );
   items.forEach(item => watcher.observe(item));
+  // If the observer never fires, for any reason, nothing stays invisible on stage.
+  setTimeout(() => items.forEach(item => (item.dataset.shown = "true")), 2500);
 }
 
 /* ------------------------------------------------------------ provenance */
@@ -171,6 +173,100 @@ function addRow(parent, label, record) {
   if (record?.reason) row.title = record.reason;
   row.append(value);
   parent.append(row);
+}
+
+/* -------------------------------------------------------------- variants */
+// Designs as the run recorded them. A rejected variant stays visible with its
+// reason, because a search that only shows winners is not showing a search.
+
+function renderVariants(manifest) {
+  const host = $("variants");
+  host.replaceChildren();
+  const designed = manifest.entries.filter(entry => entry.stage === "design");
+  if (!designed.length) {
+    host.append(el("p", "empty",
+      "No design stage in this run. When Tamarind Bio returns variants they appear here as they are scored, rejects included."));
+    return 0;
+  }
+  for (const entry of designed) {
+    const row = el("div", "variant");
+    row.dataset.status = entry.status;
+    const pip = el("span", "pip");
+    pip.dataset.status = entry.status;
+    const mutations = entry.parameters?.mutations;
+    row.append(pip, el("span", "variant__mutations",
+      Array.isArray(mutations) && mutations.length ? mutations.join(" + ") : entry.id));
+    const metric = entry.metrics.map(item => displayMetric(item, entry)).find(Boolean);
+    row.append(el("span", "row__value", metric ? `${metric.value} ${metric.unit}` : ""));
+    if (entry.status !== "succeeded" && entry.reason) {
+      row.append(el("span", "variant__reason", entry.reason));
+    }
+    host.append(row);
+  }
+  return designed.length;
+}
+
+/* ------------------------------------------------------ the walkthrough */
+// Four steps over the same run. A step with no data in this run says so
+// rather than being skipped or filled in.
+
+const STEPS = [
+  { name: "The loop", caption: () => captions.loop },
+  { name: "The chassis", caption: () => captions.chassis },
+  { name: "The designs", caption: () => captions.designs },
+  { name: "The pick", caption: () => captions.pick },
+];
+
+const captions = {
+  loop: ["Reading the loop", "Loading the run."],
+  chassis: ["The enzyme we start from", "Loading the run."],
+  designs: ["Designs, scored", "Loading the run."],
+  pick: ["The pick, and what it trades", "Loading the run."],
+};
+
+let currentStep = 0;
+let playing = false;
+let timer = null;
+
+function paintStep(index) {
+  currentStep = (index + STEPS.length) % STEPS.length;
+  for (const button of document.querySelectorAll(".step")) {
+    const step = Number(button.dataset.step);
+    button.dataset.on = String(step === currentStep);
+    button.dataset.done = String(step < currentStep);
+  }
+  const box = $("stage-caption");
+  if (!box) return;
+  const [title, body] = STEPS[currentStep].caption();
+  box.dataset.swapping = "true";
+  setTimeout(() => {
+    box.replaceChildren(el("strong", null, title), el("p", null, body));
+    box.dataset.swapping = "false";
+  }, 160);
+}
+
+function setPlaying(next) {
+  playing = next;
+  const button = $("step-play");
+  button.dataset.playing = String(playing);
+  button.textContent = playing ? "Pause" : "Play";
+  clearInterval(timer);
+  if (playing) timer = setInterval(() => paintStep(currentStep + 1), 6500);
+}
+
+function walkthrough() {
+  const viewport = document.querySelector(".stage__viewport");
+  const box = el("div", "stage__caption");
+  box.id = "stage-caption";
+  viewport.append(box);
+
+  for (const button of document.querySelectorAll(".step")) {
+    button.addEventListener("click", () => { setPlaying(false); paintStep(Number(button.dataset.step)); });
+  }
+  $("step-next").addEventListener("click", () => { setPlaying(false); paintStep(currentStep + 1); });
+  $("step-back").addEventListener("click", () => { setPlaying(false); paintStep(currentStep - 1); });
+  $("step-play").addEventListener("click", () => setPlaying(!playing));
+  paintStep(0);
 }
 
 /* ---------------------------------------------------------------- the run */
@@ -246,6 +342,7 @@ async function renderRun() {
   }
   const target = await source.json(sensed.artefacts[0]);
 
+  rows.replaceChildren();
   addRow(rows, "run", { basis: "code", value: manifest.run_id });
   addRow(rows, "status", { basis: "code", value: manifest.status });
   addRow(rows, "target", { basis: "code", value: target.target?.name });
@@ -263,9 +360,46 @@ async function renderRun() {
   renderMetrics(manifest, rows);
 
   renderLedger(manifest);
+  const designCount = renderVariants(manifest);
+
+  // The walkthrough says what this run actually holds, step by step.
+  const anchorValue = anchor ? evidenceValue(anchor.component) : "not named";
+  const supplied = ["temperature_c", "ph", "chemistry", "residence_time_s"]
+    .filter(key => target.envelope?.[key]?.basis && target.envelope[key].basis !== "unknown").length;
+  captions.loop = [
+    `${target.target?.name || "This run"}`,
+    `Anchor: ${anchorValue}. ${supplied
+      ? `${supplied} of four envelope values supplied.`
+      : "No envelope value is supplied, so nothing here claims the conditions inside a loop."}`,
+  ];
+
+  const chassisEntry = manifest.entries.find(entry => entry.stage === "chassis" && entry.status === "succeeded");
+  let chassisRecord = null;
+  if (chassisEntry?.artefacts.length) {
+    try { chassisRecord = await source.json(chassisEntry.artefacts[0]); } catch { chassisRecord = null; }
+  }
+  captions.chassis = chassisRecord
+    ? [chassisRecord.name || "The chassis",
+       `${chassisRecord.selection_reason || "Selected for this anchor."}${
+         chassisRecord.design_ready === false ? " Not marked design ready." : ""}`]
+    : ["No chassis in this run", "The chassis stage has not run, so there is nothing to start from."];
+
+  captions.designs = designCount
+    ? [`${designCount} design${designCount === 1 ? "" : "s"} in this run`,
+       "Each carries its mutation set and the model that scored it. Rejected designs stay listed with their reason."]
+    : ["No designs yet",
+       "The design stage has not run. When it does, variants arrive here as they are scored, and the ones that fail the active-site check stay visible with their reason."];
+
+  paintStep(currentStep);
 
   const ranked = manifest.entries.find(entry => entry.stage === "rank" && entry.status === "succeeded");
-  shortlist.replaceChildren(el("p", "row__label", ranked
+  captions.pick = ranked
+    ? ["The pick", "Ranked on stability, activity and confidence, with the trade-off shown rather than blended away."]
+    : ["Nothing ranked yet",
+       "Design, fold and score have not run, so there is no shortlist. The panel stays empty rather than showing a placeholder candidate."];
+  paintStep(currentStep);
+
+  shortlist.replaceChildren(el("p", "empty", ranked
     ? "Shortlist entries are listed above with the model behind each number."
     : "No ranked shortlist in this run. The design, fold and score stages have not run, so there is nothing to rank and nothing is shown in their place."));
 
@@ -293,4 +427,5 @@ async function renderRun() {
 $("notice").textContent = notice;
 revealOnScroll();
 startScenes();
+walkthrough();
 renderRun();
