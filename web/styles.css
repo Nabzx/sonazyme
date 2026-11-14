@@ -678,3 +678,38 @@ button:focus-visible { outline: 2px solid var(--cobalt-hydro); outline-offset: 2
 .answer__steps { margin-top: var(--s3); display: flex; flex-direction: column; gap: var(--s3); }
 .answer__step { padding-left: var(--s4); border-left: 2px solid var(--cobalt-tint); }
 .answer__step em { font-style: normal; color: var(--ink-faint); font-family: var(--mono); font-size: var(--size-micro); }
+
+/* ----------------------------------------------------- the supplied render */
+
+.render {
+  margin: var(--s12) 0 0;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--s8);
+  align-items: center;
+}
+
+.render img {
+  display: block;
+  width: 100%;
+  height: clamp(260px, 32vw, 420px);
+  object-fit: contain;
+  background: #05070a;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: #000;
+  box-shadow: var(--shadow-raised);
+}
+
+.render figcaption {
+  font-size: var(--size-small);
+  color: var(--ink-muted);
+  max-width: 44ch;
+}
+
+.render figcaption strong { color: var(--ink); }
+.render__tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s4); }
+
+@media (max-width: 900px) {
+  .render { grid-template-columns: 1fr; gap: var(--s4); }
+}

@@ -23,6 +23,7 @@ STATIC_FILES = {
     "lib/api.mjs": "text/javascript; charset=utf-8",
     "lib/data.mjs": "text/javascript; charset=utf-8",
     "lib/viewer.mjs": "text/javascript; charset=utf-8",
+    "enzyme.png": "image/png",
 }
 SECURITY_HEADERS = {
     "Cache-Control": "no-store",
