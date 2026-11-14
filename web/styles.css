@@ -398,6 +398,8 @@ button:focus-visible { outline: 2px solid var(--cobalt-hydro); outline-offset: 2
 /* ------------------------------------------------------------ responsive */
 
 @media (max-width: 900px) {
+  /* A tag is a label, not a line to scroll sideways for. */
+  .tag { white-space: normal; }
   .story__grid { grid-template-columns: 1fr; gap: var(--s8); }
   .lab__frame { grid-template-columns: 1fr; }
   .stage { min-height: 380px; }
