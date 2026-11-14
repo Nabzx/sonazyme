@@ -18,7 +18,8 @@ web/dist/
 
 # Runs, artefacts and fetched reference data: generated, never committed.
 # The one cached demo run is the exception and is committed under web/fixtures.
-runs/
+# Anchored, so it does not swallow the src/sonazyme/runs package.
+/runs/
 validation/data/external/
 *.cif
 *.pdb
