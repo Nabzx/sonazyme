@@ -29,6 +29,10 @@ hold their shape in a loop running hot and alkaline. It is a design and
 triage tool for industrial biotech partners, not a product you pour into a
 pipe. Nothing here has been tested in a wet lab.
 
+> Think of Sonazyme like a doctor using an ultrasound scan (acoustic waves) to
+> spot a blockage inside a patient, and then prescribing a custom medicine
+> (an AI-designed enzyme, structure predicted with Boltz-2) to dissolve it.
+
 ## Why off-the-shelf enzymes do not work
 
 An enzyme is a protein, and a protein is a folded chain. The fold is the tool.
