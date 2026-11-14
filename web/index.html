@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sonazyme Lab</title>
+<link rel="stylesheet" href="tokens.css" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead__inner wrap">
+    <span class="wordmark">
+      <svg class="wordmark__mark" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+        <circle cx="12" cy="12" r="3" fill="var(--teal-protein)" />
+        <circle cx="12" cy="12" r="7" stroke="var(--cobalt-hydro)" stroke-width="1.5" opacity="0.65" />
+        <circle cx="12" cy="12" r="11" stroke="var(--cobalt-hydro)" stroke-width="1.5" opacity="0.28" />
+      </svg>
+      Sonazyme
+    </span>
+    <nav>
+      <a href="#problem">The problem</a>
+      <a href="#solution">The approach</a>
+      <a href="#lab">The lab</a>
+      <a href="#workflow">The workflow</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============================ act 1: the narrative ============================ -->
+
+<section class="hero wrap">
+  <p class="eyebrow">AI for Science</p>
+  <h1>Enzymes designed to survive the pipe.</h1>
+  <p class="lead">
+    We use sonar to detect biofilm build-up in cooling pipes, then release enzymes
+    designed to break it down.
+  </p>
+
+  <figure class="hero__film" id="workflow">
+    <svg class="scene" id="overhead" viewBox="0 0 1180 300" role="img"
+         aria-label="Overhead view of a cooling loop: a sonar pulse travels along the pipe, a fouled patch is detected, an enzyme is designed in the module beside the loop, dosed into the water, and the patch clears.">
+      <defs>
+        <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f0f9ff" />
+          <stop offset="1" stop-color="#e0f2fe" />
+        </linearGradient>
+      </defs>
+
+      <!-- pipe -->
+      <rect x="60" y="96" width="1060" height="108" rx="8" fill="url(#water)" stroke="var(--border)" />
+      <line x1="60" y1="96" x2="1120" y2="96" stroke="var(--border-strong)" stroke-width="2" />
+      <line x1="60" y1="204" x2="1120" y2="204" stroke="var(--border-strong)" stroke-width="2" />
+      <text x="60" y="80" class="scene__label" fill="var(--ink-faint)" font-size="11" font-family="var(--mono)">COOLING LOOP · OVERHEAD</text>
+
+      <!-- transducer -->
+      <g id="oh-transducer">
+        <rect x="132" y="70" width="86" height="22" rx="4" fill="var(--card-surface)" stroke="var(--cobalt-hydro)" />
+        <text x="175" y="85" text-anchor="middle" font-size="10" fill="var(--cobalt-hydro)" font-family="var(--mono)">TRANSDUCER</text>
+        <line x1="175" y1="92" x2="175" y2="98" stroke="var(--cobalt-hydro)" stroke-width="2" />
+      </g>
+
+      <!-- pulse -->
+      <g id="oh-pulse" opacity="0">
+        <rect x="0" y="100" width="26" height="100" rx="13" fill="var(--cobalt-hydro)" opacity="0.18" />
+        <rect x="10" y="100" width="6" height="100" rx="3" fill="var(--cobalt-hydro)" opacity="0.75" />
+      </g>
+
+      <!-- fouled patch -->
+      <g id="oh-patch" opacity="0">
+        <path d="M620 196 C 660 180 700 206 744 190 C 788 174 826 200 868 188 L868 202 L620 202 Z"
+              fill="var(--biofilm-ochre)" opacity="0.5" />
+        <path d="M620 104 C 664 120 702 96 748 112 C 794 128 830 102 868 116 L868 100 L620 100 Z"
+              fill="var(--biofilm-ochre)" opacity="0.35" />
+      </g>
+      <g id="oh-flag" opacity="0">
+        <rect x="690" y="34" width="118" height="26" rx="13" fill="var(--ochre-tint)" stroke="var(--biofilm-ochre)" />
+        <text x="749" y="51" text-anchor="middle" font-size="11" fill="var(--biofilm-ochre)" font-family="var(--mono)">FOULING FOUND</text>
+        <line x1="749" y1="60" x2="749" y2="92" stroke="var(--biofilm-ochre)" stroke-width="1.5" stroke-dasharray="3 3" />
+      </g>
+
+      <!-- lab module beside the loop -->
+      <g id="oh-lab" opacity="0">
+        <rect x="690" y="226" width="118" height="54" rx="8" fill="var(--card-surface)" stroke="var(--teal-protein)" />
+        <text x="749" y="246" text-anchor="middle" font-size="11" fill="var(--teal-protein)" font-family="var(--mono)">DESIGN</text>
+        <circle id="oh-lab-dot" cx="749" cy="264" r="7" fill="var(--teal-protein)" opacity="0.25" />
+        <line x1="749" y1="226" x2="749" y2="208" stroke="var(--teal-protein)" stroke-width="1.5" stroke-dasharray="3 3" />
+      </g>
+
+      <!-- enzyme dose -->
+      <g id="oh-dose" opacity="0">
+        <circle cx="0" cy="150" r="5" fill="var(--teal-protein)" />
+        <circle cx="-16" cy="134" r="3.5" fill="var(--teal-protein)" opacity="0.7" />
+        <circle cx="-14" cy="168" r="3" fill="var(--teal-protein)" opacity="0.55" />
+      </g>
+
+      <!-- confirming pulse -->
+      <g id="oh-confirm" opacity="0">
+        <rect x="0" y="100" width="6" height="100" rx="3" fill="var(--teal-protein)" opacity="0.8" />
+      </g>
+    </svg>
+
+    <figcaption class="filmstrip">
+      <span class="tag tag--illustrative">Illustration of the intended workflow</span>
+      <span class="filmstrip__beats" id="beats">
+        <span class="beat" data-beat="0">Ping</span>
+        <span class="beat" data-beat="1">Detect</span>
+        <span class="beat" data-beat="2">Design</span>
+        <span class="beat" data-beat="3">Dose</span>
+        <span class="beat" data-beat="4">Clear</span>
+      </span>
+    </figcaption>
+  </figure>
+</section>
+
+<section class="story wrap" id="problem">
+  <div class="story__grid reveal">
+    <div>
+      <p class="eyebrow">The problem</p>
+      <h2>Killing the bacteria leaves the glue.</h2>
+      <p>
+        Data centres move heat with water. Bacteria in that water stick to the inside
+        of the pipe and build a layer around themselves: a biofilm. It insulates the
+        metal, narrows the channel and feeds corrosion.
+      </p>
+      <p>
+        Operators dose the loop with biocide. It kills the cells at the surface and
+        leaves the material holding the film to the wall, so the film grows back on the
+        same anchor points within days.
+      </p>
+    </div>
+    <figure class="panel">
+      <svg class="scene" id="problem-scene" viewBox="0 0 620 300" role="img"
+           aria-label="A pipe wall in cross-section: a biofilm layer grows, a biocide dose clears the surface cells, the matrix remains, and the film returns.">
+        <rect x="40" y="60" width="540" height="180" rx="6" fill="url(#water)" stroke="var(--border)" />
+        <line x1="40" y1="60" x2="580" y2="60" stroke="var(--border-strong)" stroke-width="3" />
+        <line x1="40" y1="240" x2="580" y2="240" stroke="var(--border-strong)" stroke-width="3" />
+
+        <g id="ps-matrix" opacity="0">
+          <path d="M40 240 L580 240 L580 222 C520 212 470 230 410 221 C350 212 300 230 240 221 C180 212 110 230 40 222 Z"
+                fill="var(--biofilm-ochre)" opacity="0.28" />
+        </g>
+        <g id="ps-cells" opacity="0" fill="var(--biofilm-ochre)">
+          <circle cx="120" cy="226" r="4" /><circle cx="196" cy="221" r="4" />
+          <circle cx="268" cy="227" r="4" /><circle cx="344" cy="222" r="4" />
+          <circle cx="420" cy="227" r="4" /><circle cx="496" cy="222" r="4" />
+        </g>
+        <rect id="ps-biocide" x="40" y="60" width="0" height="180" fill="var(--cobalt-hydro)" opacity="0.14" />
+        <text id="ps-caption" x="40" y="276" font-size="12" font-family="var(--mono)" fill="var(--ink-faint)">1 · the film forms</text>
+      </svg>
+      <figcaption class="filmstrip">
+        <span class="tag tag--illustrative">Illustration</span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="story__grid reveal">
+    <div>
+      <p class="eyebrow">Why it is hard</p>
+      <h2>A cooling loop is a sealed box.</h2>
+      <p>
+        Nobody can see inside a running loop, so chemistry is dosed on a schedule
+        rather than on evidence, and the first sign of trouble is a performance number
+        drifting.
+      </p>
+      <p>
+        Sonar changes that. Pulses sent through the pipe wall come back changed by
+        what is on the inside, which turns a schedule into a decision: where the film
+        is, and whether a treatment did anything.
+      </p>
+    </div>
+    <figure class="panel">
+      <svg class="scene" viewBox="0 0 620 300" role="img"
+           aria-label="A transducer on the outside of a pipe sends pulses that return changed by the layer inside.">
+        <rect x="40" y="90" width="540" height="120" rx="6" fill="url(#water)" stroke="var(--border)" />
+        <line x1="40" y1="90" x2="580" y2="90" stroke="var(--border-strong)" stroke-width="3" />
+        <line x1="40" y1="210" x2="580" y2="210" stroke="var(--border-strong)" stroke-width="3" />
+        <rect x="96" y="64" width="86" height="22" rx="4" fill="var(--card-surface)" stroke="var(--cobalt-hydro)" />
+        <text x="139" y="79" text-anchor="middle" font-size="10" fill="var(--cobalt-hydro)" font-family="var(--mono)">TRANSDUCER</text>
+        <g stroke="var(--cobalt-hydro)" fill="none" opacity="0.6">
+          <path d="M196 120 a26 26 0 0 1 0 36" /><path d="M214 112 a40 40 0 0 1 0 52" />
+          <path d="M232 104 a54 54 0 0 1 0 68" />
+        </g>
+        <path d="M300 210 L580 210 L580 196 C530 188 486 202 436 195 C386 188 346 202 300 196 Z"
+              fill="var(--biofilm-ochre)" opacity="0.4" />
+        <path d="M250 138 L470 138" stroke="var(--cobalt-hydro)" stroke-width="2" marker-end="url(#arrow)" />
+        <path d="M470 166 L250 166" stroke="var(--cobalt-hydro)" stroke-width="2" stroke-dasharray="4 4" />
+        <text x="360" y="130" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--cobalt-hydro)">pulse</text>
+        <text x="360" y="184" text-anchor="middle" font-size="11" font-family="var(--mono)" fill="var(--cobalt-hydro)">echo, changed</text>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="var(--cobalt-hydro)" />
+          </marker>
+        </defs>
+      </svg>
+      <figcaption class="filmstrip">
+        <span class="tag tag--illustrative">Illustration</span>
+        <span class="tag">Acoustic front end: planned, not built</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="solution" id="solution">
+  <div class="wrap">
+    <p class="eyebrow">The approach</p>
+    <p class="solution__lines">
+      <em>Sonar finds the film.</em><br />
+      <em>Designed enzymes take it apart.</em>
+    </p>
+    <p class="solution__note">
+      Off-the-shelf cleaning enzymes unfold in a hot, alkaline loop and stop working.
+      Sonazyme starts from the biofilm, picks an enzyme that cuts what holds it
+      together, and redesigns that enzyme so its shape survives the conditions inside
+      the pipe. It is a design and triage tool, not a product you pour into a pipe.
+    </p>
+  </div>
+</section>
+
+<section class="story wrap">
+  <p class="eyebrow">The market</p>
+  <h2>Cooling is the cost nobody can switch off.</h2>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat__value">&mdash;</div>
+      <div class="stat__label">Annual water treatment and cooling maintenance per large site</div>
+      <p class="stat__tag"><span class="tag tag--assumed">Figure pending citation</span></p>
+    </div>
+    <div class="stat">
+      <div class="stat__value">&mdash;</div>
+      <div class="stat__label">Liquid-cooled capacity being built for AI workloads</div>
+      <p class="stat__tag"><span class="tag tag--assumed">Figure pending citation</span></p>
+    </div>
+    <div class="stat">
+      <div class="stat__value">&mdash;</div>
+      <div class="stat__label">Share of heat-exchanger losses attributed to fouling</div>
+      <p class="stat__tag"><span class="tag tag--assumed">Figure pending citation</span></p>
+    </div>
+  </div>
+  <p class="solution__note">
+    Numbers go in once they are cited, and they will describe current practice rather
+    than any saving of ours. Nothing in this repo claims an efficacy figure.
+  </p>
+</section>
+
+<!-- ============================ act 2: the simulation ============================ -->
+
+<section class="lab wrap" id="lab">
+  <div class="lab__head">
+    <div>
+      <p class="eyebrow">The lab</p>
+      <h2>Designing an enzyme that does not unfold in the loop.</h2>
+      <p>
+        Everything in this panel is read from a run: its inputs, the model behind each
+        number, and the artefacts each stage wrote. Nothing is computed here.
+      </p>
+    </div>
+  </div>
+
+  <div class="lab__frame">
+    <div class="stage">
+      <div class="stage__viewport">
+        <canvas id="viewer" tabindex="0" aria-label="Predicted structure viewer"></canvas>
+        <div class="stage__empty" id="viewer-empty" hidden>
+          <strong>No predicted structure in this run yet</strong>
+          <p id="viewer-empty-detail">
+            The fold stage has not run, so there are no coordinates to show. This panel
+            stays empty rather than showing a stand-in protein.
+          </p>
+        </div>
+      </div>
+      <div class="stage__bar">
+        <span class="key"><span class="key__dot key__dot--active"></span> active site</span>
+        <span class="key"><span class="key__dot key__dot--changed"></span> changed region</span>
+        <span class="controls">
+          <button type="button" id="viewer-reset">Reset view</button>
+        </span>
+      </div>
+    </div>
+
+    <div class="readout">
+      <div class="card">
+        <h3>Run</h3>
+        <div class="rows" id="run-rows"></div>
+      </div>
+      <div class="card">
+        <h3>Stages</h3>
+        <div class="ledger" id="ledger"></div>
+      </div>
+      <div class="card">
+        <h3>Shortlist</h3>
+        <div id="shortlist"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot wrap">
+  <span id="notice"></span>
+  <span>Predictions are labelled with the model that produced them.</span>
+  <a href="https://github.com/Nabzx/sonazyme">Repository</a>
+</footer>
+
+<script type="module" src="app.mjs"></script>
+</body>
+</html>

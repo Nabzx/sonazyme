@@ -1,0 +1,68 @@
+/* Clean biotech lab, light mode. Settled in #36, applied in #99.
+   Nothing outside this file names a colour. */
+
+:root {
+  /* Surface */
+  --sterile-white: #f8fafc;
+  --card-surface: #ffffff;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+
+  /* Brand and meaning. These three never swap meaning between acts. */
+  --cobalt-hydro: #0284c7;   /* water, flow, engineering trust, changed region */
+  --teal-protein: #0d9488;   /* molecular structure, enzymatic action, active site */
+  --biofilm-ochre: #ea580c;  /* fouling, warning, where the problem is */
+
+  /* Ink */
+  --ink: #0f172a;
+  --ink-muted: #475569;
+  --ink-faint: #94a3b8;
+
+  /* Tints, for fills that must stay quiet on white */
+  --cobalt-tint: #e0f2fe;
+  --teal-tint: #ccfbf1;
+  --ochre-tint: #ffedd5;
+
+  /* Type */
+  --sans: ui-sans-serif, -apple-system, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --size-display: clamp(2.4rem, 5.2vw, 4rem);
+  --size-title: clamp(1.6rem, 2.8vw, 2.2rem);
+  --size-lead: clamp(1.05rem, 1.5vw, 1.25rem);
+  --size-body: 1rem;
+  --size-small: 0.875rem;
+  --size-micro: 0.75rem;
+  --tracking-micro: 0.08em;
+
+  /* Space, on a 4px base */
+  --s1: 0.25rem;
+  --s2: 0.5rem;
+  --s3: 0.75rem;
+  --s4: 1rem;
+  --s6: 1.5rem;
+  --s8: 2rem;
+  --s12: 3rem;
+  --s16: 4rem;
+  --s24: 6rem;
+
+  /* Elevation. On white this is a hairline and a whisper, never a heavier fill. */
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow-rest: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-raised: 0 4px 16px -6px rgba(15, 23, 42, 0.12), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-contact: 0 18px 32px -24px rgba(15, 23, 42, 0.45);
+
+  /* Motion. Nothing linear, everything settles. */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --fast: 160ms;
+  --medium: 320ms;
+  --slow: 640ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --fast: 1ms;
+    --medium: 1ms;
+    --slow: 1ms;
+  }
+}
