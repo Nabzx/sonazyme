@@ -44,8 +44,8 @@ export function mountOverhead(canvas, { reduced = false, onBeat = () => {} } = {
   camera.position.set(0, 44, 21);
   camera.lookAt(-0.5, 0, 0.4);
 
-  scene.add(new THREE.HemisphereLight(0xffffff, colour("--border"), 1.55));
-  const sun = new THREE.DirectionalLight(0xffffff, 1.5);
+  scene.add(new THREE.HemisphereLight(0xffffff, colour("--border"), 1.15));
+  const sun = new THREE.DirectionalLight(0xffffff, 2.05);
   sun.position.set(-14, 34, 10);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
@@ -55,7 +55,7 @@ export function mountOverhead(canvas, { reduced = false, onBeat = () => {} } = {
   scene.add(sun);
 
   // Floor: only its shadows and a hairline grid show.
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(90, 70), new THREE.ShadowMaterial({ opacity: 0.13 }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(90, 70), new THREE.ShadowMaterial({ opacity: 0.24 }));
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
   scene.add(floor);
@@ -163,7 +163,20 @@ export function mountOverhead(canvas, { reduced = false, onBeat = () => {} } = {
   scene.add(pulse);
 
   // The enzyme dose, in teal.
-  const dose = new THREE.InstancedMesh(new THREE.SphereGeometry(0.23, 14, 10), new THREE.MeshStandardMaterial({ color: teal, emissive: teal, emissiveIntensity: 0.25, roughness: 0.4 }), DOSE);
+  const dose = new THREE.InstancedMesh(
+    new THREE.SphereGeometry(0.17, 14, 10),
+    new THREE.MeshStandardMaterial({
+      color: teal,
+      emissive: teal,
+      emissiveIntensity: 0.45,
+      roughness: 0.35,
+      depthTest: false,
+      transparent: true,
+      opacity: 0.92,
+    }),
+    DOSE,
+  );
+  dose.renderOrder = 4;
   dose.frustumCulled = false;
   scene.add(dose);
 
@@ -256,8 +269,9 @@ export function mountOverhead(canvas, { reduced = false, onBeat = () => {} } = {
         const go = smooth(dosing * 1.5 - k * 0.5);
         const u = lerp(uModule, uPatch + (k - 0.5) * 0.02, go);
         loop.getPointAt(u, dummy.position);
-        const lift = (1 - smooth(go * 5)) * 1.3;
-        dummy.position.y = PIPE_Y + 0.36 + lift;
+        // Falls from the module into the bore, then runs along inside it.
+        const lift = (1 - smooth(go * 5)) * 1.5;
+        dummy.position.y = PIPE_Y + lift;
         if (go < 0.2) {
           const a = k * Math.PI * 2 + 2.2;
           dummy.position.x = lerp(-4 + Math.cos(a) * 0.55, dummy.position.x, smooth(go * 5));
@@ -266,7 +280,7 @@ export function mountOverhead(canvas, { reduced = false, onBeat = () => {} } = {
         size = 1;
       } else if (now === 4) {
         loop.getPointAt(uPatch + (k - 0.5) * 0.02, dummy.position);
-        dummy.position.y = PIPE_Y + 0.36;
+        dummy.position.y = PIPE_Y;
         size = 1 - smooth(clear * 3);
       }
       dummy.quaternion.identity();

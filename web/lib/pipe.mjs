@@ -61,9 +61,36 @@ export function mountPipe(canvas, { reduced = false } = {}) {
   const dotMap = new THREE.CanvasTexture(dot);
 
   // The wall and its weld seams.
+  const bore = new THREE.CylinderGeometry(R, R, LENGTH, 96, 36, true);
+  // An installed pipe is not a perfect cylinder. A little deterministic
+  // waviness in the bore catches the light and gives the wall a surface.
+  const borePosition = bore.attributes.position;
+  for (let i = 0; i < borePosition.count; i += 1) {
+    const x = borePosition.getX(i);
+    const y = borePosition.getY(i);
+    const z = borePosition.getZ(i);
+    const theta = Math.atan2(z, x);
+    const ripple =
+      Math.sin(theta * 5 + y * 0.42) * 0.014 +
+      Math.sin(theta * 11 - y * 0.17) * 0.006 +
+      Math.sin(y * 1.3) * 0.009;
+    const scale = 1 + ripple;
+    borePosition.setX(i, x * scale);
+    borePosition.setZ(i, z * scale);
+  }
+  bore.computeVertexNormals();
   const wall = new THREE.Mesh(
-    new THREE.CylinderGeometry(R, R, LENGTH, 64, 1, true),
-    new THREE.MeshStandardMaterial({ color: colour("--pipe-wall"), map: grainMap, side: THREE.BackSide, roughness: 0.7, metalness: 0.3 }),
+    bore,
+    new THREE.MeshStandardMaterial({
+      color: colour("--pipe-wall"),
+      map: grainMap,
+      bumpMap: grainMap,
+      bumpScale: 0.35,
+      roughnessMap: grainMap,
+      side: THREE.BackSide,
+      roughness: 0.62,
+      metalness: 0.32,
+    }),
   );
   wall.rotation.x = Math.PI / 2;
   wall.position.z = -LENGTH / 2 + 12;
@@ -92,8 +119,24 @@ export function mountPipe(canvas, { reduced = false } = {}) {
   }
 
   const BLOBS = 7;
+  // One irregular lump, built once and instanced with its own rotation, so a
+  // cluster reads as a mass rather than a row of balls.
+  const lump = new THREE.SphereGeometry(1, 16, 12);
+  const lumpPosition = lump.attributes.position;
+  for (let i = 0; i < lumpPosition.count; i += 1) {
+    const x = lumpPosition.getX(i);
+    const y = lumpPosition.getY(i);
+    const z = lumpPosition.getZ(i);
+    const bulge =
+      1 +
+      Math.sin(x * 2.7 + 1.1) * 0.17 +
+      Math.sin(y * 3.1 + 2.3) * 0.14 +
+      Math.sin(z * 2.3 + 0.7) * 0.16;
+    lumpPosition.setXYZ(i, x * bulge, y * bulge, z * bulge);
+  }
+  lump.computeVertexNormals();
   const glue = new THREE.InstancedMesh(
-    new THREE.SphereGeometry(1, 14, 10),
+    lump,
     new THREE.MeshStandardMaterial({ color: ochre, emissive: ochre, emissiveIntensity: 0.32, roughness: 0.55 }),
     CLUSTERS * BLOBS,
   );
@@ -108,7 +151,9 @@ export function mountPipe(canvas, { reduced = false } = {}) {
       const normal = new THREE.Vector3(Math.cos(theta), Math.sin(theta), 0);
       blobs.push({
         position: normal.clone().multiplyScalar(R - 0.02).setZ(z),
-        quaternion: new THREE.Quaternion().setFromUnitVectors(Z, normal),
+        quaternion: new THREE.Quaternion()
+          .setFromUnitVectors(Z, normal)
+          .multiply(new THREE.Quaternion().setFromAxisAngle(Z, random() * Math.PI * 2)),
         size: c.size * (k ? 0.4 + random() * 0.5 : 1),
         delay: random() * 0.5,
       });

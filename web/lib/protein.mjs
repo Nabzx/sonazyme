@@ -5,7 +5,8 @@
 import * as THREE from "../vendor/three.module.js";
 import { clamp, colour, damp, fit, lerp, seeded, smooth, token } from "./tokens.mjs";
 
-const SUB = 5; // beads drawn per residue, along a smooth curve through the chain
+const SUB = 4; // samples per residue along the curve through the chain
+const RADIAL = 9; // sides of the tube
 const STRAND = 52; // beads per strand of the thing the enzyme cuts
 
 function catmull(a, b, c, d, t) {
@@ -78,6 +79,7 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
   const random = seeded(7);
   const background = colour("--sterile-white");
   const chain = colour("--chain");
+  const chainPale = colour("--card-surface").lerp(colour("--chain"), 0.35);
   const teal = colour("--teal-protein");
   const cobalt = colour("--cobalt-hydro");
   const ochre = colour("--biofilm-ochre");
@@ -97,13 +99,54 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
   rig.add(spin);
   scene.add(rig);
 
-  // Chain
-  const beads = (n - 1) * SUB + 1;
-  const material = new THREE.MeshStandardMaterial({ roughness: 0.42, metalness: 0.02 });
-  const mesh = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 14, 10), material, beads);
-  mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  // Chain, drawn as a tube swept along the curve. The topology is built once
+  // and only the vertex positions, normals and colours move, so a frame
+  // allocates nothing.
+  const rings = (n - 1) * SUB + 1;
+  const vertices = rings * RADIAL;
+  const geometry = new THREE.BufferGeometry();
+  const tubePosition = new Float32Array(vertices * 3);
+  const tubeNormal = new Float32Array(vertices * 3);
+  const tubeColour = new Float32Array(vertices * 3);
+  geometry.setAttribute("position", new THREE.BufferAttribute(tubePosition, 3));
+  geometry.setAttribute("normal", new THREE.BufferAttribute(tubeNormal, 3));
+  geometry.setAttribute("color", new THREE.BufferAttribute(tubeColour, 3));
+  const index = new Uint32Array((rings - 1) * RADIAL * 6);
+  for (let r = 0, k = 0; r < rings - 1; r += 1) {
+    for (let s = 0; s < RADIAL; s += 1) {
+      const a = r * RADIAL + s;
+      const b = r * RADIAL + ((s + 1) % RADIAL);
+      const c = a + RADIAL;
+      const d = b + RADIAL;
+      index[k++] = a; index[k++] = c; index[k++] = b;
+      index[k++] = b; index[k++] = c; index[k++] = d;
+    }
+  }
+  geometry.setIndex(new THREE.BufferAttribute(index, 1));
+  const material = new THREE.MeshStandardMaterial({
+    roughness: 0.38,
+    metalness: 0.03,
+    vertexColors: true,
+    flatShading: false,
+  });
+  const mesh = new THREE.Mesh(geometry, material);
   mesh.frustumCulled = false;
   spin.add(mesh);
+
+  // Scratch vectors, reused every frame.
+  const curve = new Float32Array(rings * 3);
+  const tangent = new THREE.Vector3();
+  const normal = new THREE.Vector3(0, 1, 0);
+  const binormal = new THREE.Vector3();
+  const previous = new THREE.Vector3(0, 1, 0);
+  const point = new THREE.Vector3();
+  const offset = new THREE.Vector3();
+  const COS = new Float32Array(RADIAL);
+  const SIN = new Float32Array(RADIAL);
+  for (let s = 0; s < RADIAL; s += 1) {
+    COS[s] = Math.cos((s / RADIAL) * Math.PI * 2);
+    SIN[s] = Math.sin((s / RADIAL) * Math.PI * 2);
+  }
 
   const scatter = new Float32Array(n * 3);
   const phase = new Float32Array(n * 3);
@@ -115,7 +158,11 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
   }
   const live = new Float32Array(n * 3);
   const radius = new Float32Array(n);
-  for (let i = 0; i < n; i += 1) radius[i] = lerp(0.72, 1.18, clamp((data.confidence[i] - 45) / 45));
+  // Thickness follows the model's own confidence: the uncertain leading tail
+  // tapers away rather than swinging about at full weight.
+  for (let i = 0; i < n; i += 1) {
+    radius[i] = lerp(0.3, 1.3, clamp((data.confidence[i] - 50) / 38) ** 0.85);
+  }
 
   // What the enzyme cuts: a short strand of the glue, in ochre.
   const outward = model.siteCentre.clone().normalize();
@@ -151,7 +198,7 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
     if (mode === "hero") {
       camera.position.z = wide ? 150 : 235;
       const halfH = Math.tan((camera.fov * Math.PI) / 360) * camera.position.z;
-      rig.position.set(wide ? halfH * (w / h) * 0.46 : 0, wide ? 0 : halfH * 0.4, 0);
+      rig.position.set(wide ? halfH * (w / h) * 0.54 : 0, wide ? 2 : halfH * 0.4, 0);
     } else {
       camera.position.z = w / h > 0.95 ? 146 : 172;
       rig.position.set(4, w / h > 0.95 ? 3 : 9, 0);
@@ -185,7 +232,7 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
       }
     }
 
-    // Beads along a smooth curve through the residues.
+    // Sample the curve through the residues, then sweep a tube along it.
     let b = 0;
     for (let i = 0; i < n - 1; i += 1) {
       const i0 = Math.max(0, i - 1) * 3;
@@ -193,21 +240,53 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
       const i2 = (i + 1) * 3;
       const i3 = Math.min(n - 1, i + 2) * 3;
       for (let s = 0; s < SUB; s += 1) {
-        const t = s / SUB;
-        dummy.position.set(
-          catmull(live[i0], live[i1], live[i2], live[i3], t),
-          catmull(live[i0 + 1], live[i1 + 1], live[i2 + 1], live[i3 + 1], t),
-          catmull(live[i0 + 2], live[i1 + 2], live[i2 + 2], live[i3 + 2], t),
-        );
-        const r = t < 0.5 ? i : i + 1;
-        paint(b, r);
+        const u = s / SUB;
+        curve[b * 3] = catmull(live[i0], live[i1], live[i2], live[i3], u);
+        curve[b * 3 + 1] = catmull(live[i0 + 1], live[i1 + 1], live[i2 + 1], live[i3 + 1], u);
+        curve[b * 3 + 2] = catmull(live[i0 + 2], live[i1 + 2], live[i2 + 2], live[i3 + 2], u);
         b += 1;
       }
     }
-    dummy.position.set(live[(n - 1) * 3], live[(n - 1) * 3 + 1], live[(n - 1) * 3 + 2]);
-    paint(b, n - 1);
-    mesh.instanceMatrix.needsUpdate = true;
-    mesh.instanceColor.needsUpdate = true;
+    curve[b * 3] = live[(n - 1) * 3];
+    curve[b * 3 + 1] = live[(n - 1) * 3 + 1];
+    curve[b * 3 + 2] = live[(n - 1) * 3 + 2];
+
+    previous.set(0, 1, 0);
+    for (let r = 0; r < rings; r += 1) {
+      const here = r * 3;
+      const back = Math.max(0, r - 1) * 3;
+      const ahead = Math.min(rings - 1, r + 1) * 3;
+      tangent
+        .set(curve[ahead] - curve[back], curve[ahead + 1] - curve[back + 1], curve[ahead + 2] - curve[back + 2])
+        .normalize();
+      // Carry the frame along the curve so the tube does not twist on itself.
+      normal.copy(previous).addScaledVector(tangent, -previous.dot(tangent));
+      if (normal.lengthSq() < 1e-6) normal.set(tangent.y, -tangent.x, 0);
+      normal.normalize();
+      previous.copy(normal);
+      binormal.crossVectors(tangent, normal);
+
+      const residue = Math.min(n - 1, Math.round(r / SUB));
+      const thickness = widthAt(residue);
+      point.set(curve[here], curve[here + 1], curve[here + 2]);
+      shade(residue);
+      for (let s = 0; s < RADIAL; s += 1) {
+        const v = (r * RADIAL + s) * 3;
+        offset.copy(normal).multiplyScalar(COS[s]).addScaledVector(binormal, SIN[s]);
+        tubeNormal[v] = offset.x;
+        tubeNormal[v + 1] = offset.y;
+        tubeNormal[v + 2] = offset.z;
+        tubePosition[v] = point.x + offset.x * thickness;
+        tubePosition[v + 1] = point.y + offset.y * thickness;
+        tubePosition[v + 2] = point.z + offset.z * thickness;
+        tubeColour[v] = tint.r;
+        tubeColour[v + 1] = tint.g;
+        tubeColour[v + 2] = tint.b;
+      }
+    }
+    geometry.attributes.position.needsUpdate = true;
+    geometry.attributes.normal.needsUpdate = true;
+    geometry.attributes.color.needsUpdate = true;
 
     if (strand.visible) drawStrand();
 
@@ -224,15 +303,19 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
     renderer.render(scene, camera);
   }
 
-  function paint(index, residue) {
-    const size = radius[residue] * (1 + model.site[residue] * state.site * 0.38 + model.region[residue] * state.region * 0.16);
-    dummy.scale.setScalar(size);
-    dummy.updateMatrix();
-    mesh.setMatrixAt(index, dummy.matrix);
-    tint.copy(chain);
+  // The cutting site swells a little as it lights up, so it reads as a place
+  // on the chain rather than a stripe of colour.
+  function widthAt(residue) {
+    return (
+      radius[residue] *
+      (1 + model.site[residue] * state.site * 0.5 + model.region[residue] * state.region * 0.12)
+    );
+  }
+
+  function shade(residue) {
+    tint.copy(chainPale).lerp(chain, residue / n);
     if (model.region[residue]) tint.lerp(cobalt, state.region);
     if (model.site[residue]) tint.lerp(teal, state.site);
-    mesh.setColorAt(index, tint);
   }
 
   // A two-stranded twist that slides into the cutting site and parts there.

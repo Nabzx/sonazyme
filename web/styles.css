@@ -261,6 +261,14 @@ canvas { display: block; }
 }
 .card__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .card__tags { position: absolute; left: var(--s3); right: var(--s3); bottom: var(--s3); display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+
+@media (max-width: 900px) {
+  /* Under the canvas, not over it: on a phone the card is too small to spare
+     the room, and a tag that hides the enzyme defeats both. */
+  .card__stage { display: flex; flex-direction: column; aspect-ratio: auto; height: auto; }
+  .card__canvas { position: static; width: 100%; height: 62vw; min-height: 240px; }
+  .card__tags { position: static; padding: var(--s3) var(--s1) 0; }
+}
 .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s2); margin-top: var(--s4); padding-inline: var(--s2); }
 .step {
   display: flex; flex-direction: column; gap: 4px; width: 100%; text-align: left;
