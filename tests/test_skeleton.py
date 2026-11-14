@@ -18,7 +18,9 @@ def test_every_layer_imports_and_says_what_it_is(name):
     assert module.__doc__, f"sonazyme.{name} needs a docstring saying what lives there"
 
 
-@pytest.mark.parametrize("stage", list(STAGES))
+@pytest.mark.parametrize(
+    "stage", [stage for stage in STAGES if stage not in {"sense", "chassis", "fold"}]
+)
 def test_unbuilt_stages_name_their_milestone(stage):
     module = importlib.import_module(f"sonazyme.{stage}")
     with pytest.raises(NotBuiltError) as raised:
