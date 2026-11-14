@@ -175,6 +175,139 @@ function addRow(parent, label, record) {
   parent.append(row);
 }
 
+/* ------------------------------------------------------- the loop survey */
+// A simulated survey (ADR-0013). Every number here is the forward model's,
+// and the panel says so rather than implying an instrument.
+
+const MAX_FILM_UM = 500;
+
+const SVG = "http://www.w3.org/2000/svg";
+const svg = (tag, attributes) => {
+  const node = document.createElementNS(SVG, tag);
+  for (const [name, value] of Object.entries(attributes)) node.setAttribute(name, String(value));
+  return node;
+};
+
+// The bar is drawn with attributes rather than inline style: the dashboard is
+// served under a content security policy that forbids inline styles.
+function pipeBar(section, estimate) {
+  const height = 26;
+  const frame = svg("svg", { viewBox: `0 0 100 ${height}`, class: "pipe", preserveAspectRatio: "none" });
+  frame.append(svg("rect", { x: 0, y: 0, width: 100, height, rx: 3, class: "pipe__water" }));
+  const thickness = estimate?.film_thickness_um;
+  if (typeof thickness === "number") {
+    const share = value => Math.min(height, (value / MAX_FILM_UM) * height);
+    const filled = share(thickness);
+    frame.append(
+      svg("rect", {
+        x: 0,
+        y: height - filled,
+        width: 100,
+        height: filled,
+        class: "pipe__film",
+        "data-layer": estimate.layer || "undetermined",
+      }),
+    );
+    const [low, high] = estimate.interval_um || [thickness, thickness];
+    frame.append(
+      svg("line", {
+        x1: 0, x2: 100,
+        y1: height - share(high), y2: height - share(high),
+        class: "pipe__interval",
+      }),
+      svg("line", {
+        x1: 0, x2: 100,
+        y1: height - share(low), y2: height - share(low),
+        class: "pipe__interval",
+      }),
+    );
+  }
+  if (section.sensor) {
+    frame.append(svg("rect", { x: 4, y: 0, width: 14, height: 3, class: "pipe__sensor" }));
+  }
+  return frame;
+}
+
+function sectionRow(section, observation) {
+  const row = el("div", "section-row");
+  const label = el("div");
+  label.append(el("div", "section-row__name", section.id));
+  label.append(el("div", "section-row__role", section.role));
+  row.append(label);
+
+  const estimate = observation?.estimate || {};
+  row.append(pipeBar(section, estimate));
+
+  const thickness = estimate.film_thickness_um;
+  const value = el("div", "section-row__estimate");
+  if (typeof thickness === "number") {
+    const [low, high] = estimate.interval_um || [thickness, thickness];
+    value.append(el("div", null, `${thickness} um`));
+    value.append(el("div", "section-row__role", `${low} to ${high}`));
+  } else {
+    value.dataset.undetermined = "true";
+    value.textContent = "undetermined";
+    if (estimate.reason) value.title = estimate.reason;
+  }
+  row.append(value);
+  return row;
+}
+
+function renderLoopMap(loop, reading) {
+  const host = $("loopmap");
+  host.replaceChildren();
+  if (!loop || !reading) {
+    host.append(el("p", "empty", "No survey in this run."));
+    return;
+  }
+  const byId = new Map(reading.observation.map(item => [item.section_id, item]));
+  const head = el("div", "section-row");
+  head.append(
+    el("div", "section-row__role", loop.name),
+    el("div", "section-row__role", "estimated layer on the inner wall"),
+    el("div", "section-row__role", "thickness"),
+  );
+  host.append(head);
+  for (const section of loop.section) host.append(sectionRow(section, byId.get(section.id)));
+  host.append(el("p", "section-row__role", reading.basis_reason));
+}
+
+function renderBeforeAfter(loop, before, after) {
+  const host = $("survey");
+  host.replaceChildren();
+  if (!before) {
+    host.append(el("p", "empty",
+      "No acoustic survey in this run. A reading would say where the film is and how sure the model is about it."));
+    return;
+  }
+  host.append(el("p", "empty", before.basis_reason));
+  if (!after) return;
+  const panel = el("div", "beforeafter");
+  const first = new Map(before.observation.map(item => [item.section_id, item]));
+  const second = new Map(after.observation.map(item => [item.section_id, item]));
+  const show = item => {
+    const value = item?.estimate?.film_thickness_um;
+    return typeof value === "number" ? `${value} um` : "undetermined";
+  };
+  for (const section of loop.section) {
+    const a = first.get(section.id);
+    const b = second.get(section.id);
+    if (!a || !b) continue;
+    if (a.estimate.film_thickness_um === null && b.estimate.film_thickness_um === null) continue;
+    const row = el("div", "beforeafter__row");
+    row.append(el("span", null, section.id));
+    row.append(el("span", "beforeafter__value", show(a)));
+    row.append(el("span", "beforeafter__arrow", "\u2192"));
+    row.append(el("span", "beforeafter__value beforeafter__value--after", show(b)));
+    panel.append(row);
+  }
+  if (panel.childElementCount) {
+    host.append(panel);
+    host.append(el("p", "section-row__role",
+      "Two simulated surveys of the same loop. Nothing here says a treatment caused the change."));
+  }
+}
+
 /* -------------------------------------------------------------- variants */
 // Designs as the run recorded them. A rejected variant stays visible with its
 // reason, because a search that only shows winners is not showing a search.
@@ -235,6 +368,8 @@ function paintStep(index) {
     button.dataset.on = String(step === currentStep);
     button.dataset.done = String(step < currentStep);
   }
+  const viewport = $("viewport");
+  if (viewport) viewport.dataset.view = currentStep === 0 ? "loop" : "structure";
   const box = $("stage-caption");
   if (!box) return;
   const [title, body] = STEPS[currentStep].caption();
@@ -362,11 +497,37 @@ async function renderRun() {
   renderLedger(manifest);
   const designCount = renderVariants(manifest);
 
+  // Simulated loop surveys, in the order the run recorded them (ADR-0013).
+  const surveys = manifest.entries.filter(
+    entry => entry.stage === "sense" && entry.status === "succeeded"
+      && entry.producer.name.includes("acoustic") && entry.artefacts.length,
+  );
+  const readings = [];
+  for (const entry of surveys) {
+    try {
+      readings.push({ entry, record: await source.json(entry.artefacts[0]) });
+    } catch {
+      // A reading that cannot be verified is simply not shown.
+    }
+  }
+  const loopMap = surveys.length ? surveys[0].parameters.loop : null;
+  renderLoopMap(loopMap, readings[0]?.record);
+  renderBeforeAfter(loopMap, readings[0]?.record, readings[1]?.record);
+
   // The walkthrough says what this run actually holds, step by step.
   const anchorValue = anchor ? evidenceValue(anchor.component) : "not named";
   const supplied = ["temperature_c", "ph", "chemistry", "residence_time_s"]
     .filter(key => target.envelope?.[key]?.basis && target.envelope[key].basis !== "unknown").length;
-  captions.loop = [
+  const fouled = (readings[0]?.record.observation || []).filter(
+    item => typeof item.estimate.film_thickness_um === "number",
+  ).length;
+  captions.loop = readings.length
+    ? [
+        `${loopMap.name}, simulated survey`,
+        `${fouled} of ${loopMap.section.length} sections return a layer the model can size. `
+          + "Every number here is from the forward model, not from an instrument.",
+      ]
+    : [
     `${target.target?.name || "This run"}`,
     `Anchor: ${anchorValue}. ${supplied
       ? `${supplied} of four envelope values supplied.`

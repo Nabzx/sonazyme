@@ -45,28 +45,38 @@ export class TraceViewer {
     const grid = token("--border", "#e2e8f0");
     const activeColour = token("--teal-protein", "#0d9488");
     const changedColour = token("--cobalt-hydro", "#0284c7");
-    const chainColour = token("--ink-faint", "#94a3b8");
+    const chainColour = token("--ink-muted", "#475569");
     ctx.strokeStyle = grid; ctx.lineWidth = 1;
     for (let x = 24; x < width; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke(); }
     for (let y = 24; y < height; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke(); }
     if (!this.points.length) return;
     const center = [0,1,2].map(axis => this.points.reduce((sum,p) => sum + p.xyz[axis],0) / this.points.length);
     const radius = Math.max(...this.points.map(p => Math.hypot(...p.xyz.map((v,i) => v - center[i]))), 1);
-    const scale = Math.min(width, height) * 0.34 / radius * this.zoom;
+    const scale = Math.min(width, height) * 0.4 / radius * this.zoom;
+    // Sit the subject a little above centre, so the caption has room beneath it.
+    const lift = height * 0.06;
     const [pitch, yaw] = this.angle;
     const projected = this.points.map(point => {
       const [x,y,z] = point.xyz.map((v,i) => v - center[i]);
       const rx = x * Math.cos(yaw) + z * Math.sin(yaw), rz = -x * Math.sin(yaw) + z * Math.cos(yaw);
-      return { position:point.position, x:width/2 + rx*scale, y:height/2 + (y*Math.cos(pitch)-rz*Math.sin(pitch))*scale, z:y*Math.sin(pitch)+rz*Math.cos(pitch) };
+      return { position:point.position, confidence:point.confidence, x:width/2 + rx*scale, y:height/2 - lift + (y*Math.cos(pitch)-rz*Math.sin(pitch))*scale, z:y*Math.sin(pitch)+rz*Math.cos(pitch) };
     });
     const segments = projected.slice(1).map((p,i) => ({ a:projected[i], b:p })).sort((a,b) => (a.a.z+a.b.z)-(b.a.z+b.b.z));
+    // Depth reads through alpha and a soft shadow; confidence, where the file
+    // reported it, reads through line weight. Neither invents a number.
+    ctx.shadowColor = "rgba(15, 23, 42, 0.18)";
     for (const {a,b} of segments) {
+      const marked = this.active.has(b.position) || this.changed.has(b.position);
+      const confidence = typeof b.confidence === "number" ? Math.max(0, Math.min(100, b.confidence)) : null;
       ctx.strokeStyle = this.active.has(b.position) ? activeColour : this.changed.has(b.position) ? changedColour : chainColour;
-      ctx.globalAlpha = Math.max(0.3, Math.min(1, 0.65 + (a.z+b.z)/(4*radius)));
-      ctx.lineWidth = this.active.has(b.position) || this.changed.has(b.position) ? 4 : 2.2;
-      ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+      ctx.globalAlpha = Math.max(0.35, Math.min(1, 0.7 + (a.z+b.z)/(4*radius)));
+      ctx.lineWidth = marked ? 5 : 2 + (confidence === null ? 1.2 : (confidence / 100) * 2.6);
+      ctx.shadowBlur = marked ? 10 : 6;
+      ctx.shadowOffsetY = 2;
+      ctx.lineCap = "round"; ctx.lineJoin = "round";
+      ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
     }
-    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0; ctx.shadowOffsetY = 0; ctx.globalAlpha = 1;
     for (const point of projected.filter(p => this.active.has(p.position) || this.changed.has(p.position))) {
       ctx.fillStyle = this.active.has(point.position) ? activeColour : changedColour;
       ctx.beginPath(); ctx.arc(point.x,point.y,3.5,0,Math.PI*2); ctx.fill();

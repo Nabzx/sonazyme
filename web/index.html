@@ -282,7 +282,8 @@
 
   <div class="lab__frame">
     <div class="stage">
-      <div class="stage__viewport">
+      <div class="stage__viewport" id="viewport" data-view="loop">
+        <div class="loopmap" id="loopmap" aria-label="Simulated acoustic survey of the loop"></div>
         <canvas id="viewer" tabindex="0" aria-label="Predicted structure viewer"></canvas>
         <div class="stage__empty" id="viewer-empty" hidden>
           <strong>No predicted structure in this run yet</strong>
@@ -293,8 +294,9 @@
         </div>
       </div>
       <div class="stage__bar">
-        <span class="key"><span class="key__dot key__dot--active"></span> active site</span>
-        <span class="key"><span class="key__dot key__dot--changed"></span> changed region</span>
+        <span class="key" id="key-structure"><span class="key__dot key__dot--active"></span> active site</span>
+        <span class="key" id="key-changed"><span class="key__dot key__dot--changed"></span> changed region</span>
+        <span class="key" id="key-fouling"><span class="key__dot key__dot--fouling"></span> fouling, simulated</span>
         <span class="controls">
           <button type="button" id="viewer-reset">Reset view</button>
         </span>
@@ -313,6 +315,10 @@
         <div class="ledger" id="ledger">
           <div class="skeleton"></div><div class="skeleton"></div>
         </div>
+      </div>
+      <div class="card" id="survey-card">
+        <h3>Survey</h3>
+        <div id="survey"></div>
       </div>
       <div class="card">
         <h3>Designs</h3>

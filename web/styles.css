@@ -245,6 +245,8 @@ canvas { display: block; }
 .stage__viewport { position: relative; flex: 1; }
 .stage__viewport canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 
+.stage__empty[hidden] { display: none; }
+
 .stage__empty {
   position: absolute;
   inset: 0;
@@ -468,6 +470,7 @@ button:focus-visible { outline: 2px solid var(--cobalt-hydro); outline-offset: 2
   left: var(--s6);
   right: var(--s6);
   bottom: var(--s6);
+  max-width: 44ch;
   padding: var(--s4);
   border-radius: var(--radius);
   border: 1px solid var(--border);
@@ -543,3 +546,74 @@ button:focus-visible { outline: 2px solid var(--cobalt-hydro); outline-offset: 2
   .sticky { position: static; }
   .steps__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ------------------------------------------------ the loop map (#75, #76) */
+
+.loopmap {
+  position: absolute;
+  inset: 0;
+  padding: var(--s6);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--s4);
+  transition: opacity var(--medium) var(--ease);
+}
+
+.viewport[data-view="structure"] { display: block; }
+#viewport[data-view="structure"] .loopmap { opacity: 0; pointer-events: none; }
+#viewport[data-view="loop"] canvas { opacity: 0; }
+#viewport canvas { transition: opacity var(--medium) var(--ease); }
+
+.section-row {
+  display: grid;
+  grid-template-columns: 10rem 1fr 6.5rem;
+  align-items: center;
+  gap: var(--s4);
+  font-size: var(--size-small);
+}
+
+.section-row__name { font-weight: 550; }
+.section-row__role { color: var(--ink-faint); font-size: var(--size-micro); }
+
+.pipe {
+  width: 100%;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.pipe__water { fill: var(--cobalt-tint); }
+.pipe__film { fill: var(--biofilm-ochre); opacity: 0.55; }
+.pipe__film[data-layer="hard"] { fill: var(--ink-muted); opacity: 0.5; }
+.pipe__interval { stroke: var(--biofilm-ochre); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.8; }
+.pipe__sensor { fill: var(--cobalt-hydro); }
+
+.section-row__estimate { font-family: var(--mono); font-size: var(--size-micro); text-align: right; }
+.section-row__estimate[data-undetermined="true"] { color: var(--ink-faint); }
+
+.key__dot--fouling { background: var(--biofilm-ochre); }
+#key-fouling, #key-structure, #key-changed { transition: opacity var(--fast) var(--ease); }
+#viewport[data-view="loop"] ~ .stage__bar #key-structure,
+#viewport[data-view="loop"] ~ .stage__bar #key-changed { opacity: 0.35; }
+#viewport[data-view="structure"] ~ .stage__bar #key-fouling { opacity: 0.35; }
+
+/* before and after */
+
+.beforeafter { display: flex; flex-direction: column; gap: var(--s3); }
+
+.beforeafter__row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: var(--s3);
+  align-items: baseline;
+  font-size: var(--size-small);
+  padding-block: var(--s2);
+  border-bottom: 1px solid var(--border);
+}
+
+.beforeafter__row:last-child { border-bottom: 0; }
+.beforeafter__value { font-family: var(--mono); font-size: var(--size-micro); }
+.beforeafter__arrow { color: var(--ink-faint); }
+.beforeafter__value--after { color: var(--teal-protein); }
