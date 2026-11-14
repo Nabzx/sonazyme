@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Reject a commit message that is not a Conventional Commit, or that carries
+# an em dash or a co-author trailer (AGENTS.md, House style).
+set -euo pipefail
+
+msg_file="$1"
+python3 scripts/conventional_commits.py --message "$(grep -v '^#' "$msg_file")"
+
+if grep -q $'\xe2\x80\x94' "$msg_file"; then
+    echo "commit-msg: no em dashes." >&2
+    exit 1
+fi
+if grep -qi '^co-authored-by:' "$msg_file"; then
+    echo "commit-msg: no co-author trailers." >&2
+    exit 1
+fi

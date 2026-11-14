@@ -1,0 +1,14 @@
+# Who reviews what. One owner for now. As the team forms, give each stage its
+# own owner here and the review requests follow automatically.
+* @Nabzx
+
+# /src/sonazyme/core/     @Nabzx
+# /src/sonazyme/sense/    @
+# /src/sonazyme/chassis/  @
+# /src/sonazyme/design/   @
+# /src/sonazyme/fold/     @
+# /src/sonazyme/score/    @
+# /src/sonazyme/rank/     @
+# /src/sonazyme/explain/  @
+# /web/                   @
+# /docs/biology/          @

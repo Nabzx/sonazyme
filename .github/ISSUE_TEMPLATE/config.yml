@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: The biology, from scratch
+    url: https://github.com/Nabzx/sonazyme/tree/main/docs/biology
+    about: Every biological idea this repo depends on, at GCSE level.
+  - name: Roadmap
+    url: https://github.com/Nabzx/sonazyme/blob/main/ROADMAP.md
+    about: What each milestone ships and in what order.
+  - name: Architecture decisions
+    url: https://github.com/Nabzx/sonazyme/tree/main/docs/adr
+    about: Why the project is built the way it is.

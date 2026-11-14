@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Fast checks before a commit. The full set is `just ci` and CI.
+# Install with `just install-hooks`.
+set -euo pipefail
+
+if command -v ruff >/dev/null 2>&1; then
+    ruff check .
+    ruff format --check .
+fi
+
+echo "pre-commit: ok"

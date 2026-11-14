@@ -1,0 +1,62 @@
+name: Bug report
+description: Something behaves differently from what the docs or an ADR say.
+labels: ["bug", "needs-repro"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is for reproducible bugs. A number shown without the model behind
+        it, or a prediction presented as a measurement, is a bug too, and a
+        serious one.
+
+        Keep it to roughly one screen. State what you observed, not a guessed
+        cause. Never paste an API key.
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Before filing
+      options:
+        - label: This is a reproducible bug, not a feature request or question.
+          required: true
+        - label: I searched open and closed issues and this is not a duplicate.
+          required: true
+        - label: This report contains no credentials.
+          required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: What happened
+      description: What you observed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: Point at the doc, ADR, retrodiction case or published measurement that says otherwise.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Shortest reproduction
+      description: The exact commands or code. If it concerns a run, give the run id.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      value: |
+        - Sonazyme version or commit:
+        - OS and architecture:
+        - Python version:
+        - Run id, if any:
+    validations:
+      required: true

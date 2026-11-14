@@ -1,0 +1,58 @@
+# Path-based PR labels (actions/labeler). See .github/workflows/labeler.yml.
+# A PR can pick up several; that is fine.
+
+"area:core":
+  - changed-files:
+      - any-glob-to-any-file: ["src/sonazyme/core/**", "src/sonazyme/runs/**"]
+
+"area:sense":
+  - changed-files:
+      - any-glob-to-any-file: ["src/sonazyme/sense/**"]
+
+"area:chassis":
+  - changed-files:
+      - any-glob-to-any-file: ["src/sonazyme/chassis/**"]
+
+"area:design":
+  - changed-files:
+      - any-glob-to-any-file: ["src/sonazyme/design/**"]
+
+"area:fold":
+  - changed-files:
+      - any-glob-to-any-file: ["src/sonazyme/fold/**"]
+
+"area:score":
+  - changed-files:
+      - any-glob-to-any-file: ["src/sonazyme/score/**"]
+
+"area:rank":
+  - changed-files:
+      - any-glob-to-any-file: ["src/sonazyme/rank/**"]
+
+"area:explain":
+  - changed-files:
+      - any-glob-to-any-file: ["src/sonazyme/explain/**"]
+
+"area:web":
+  - changed-files:
+      - any-glob-to-any-file: ["web/**", "src/sonazyme/api/**", "docs/design/**"]
+
+"area:bio":
+  - changed-files:
+      - any-glob-to-any-file: ["docs/biology/**"]
+
+targets:
+  - changed-files:
+      - any-glob-to-any-file: ["targets/**"]
+
+retrodiction:
+  - changed-files:
+      - any-glob-to-any-file: ["validation/**", "docs/validation/**"]
+
+adr:
+  - changed-files:
+      - any-glob-to-any-file: ["docs/adr/**"]
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: ["**/*.md", "docs/**"]

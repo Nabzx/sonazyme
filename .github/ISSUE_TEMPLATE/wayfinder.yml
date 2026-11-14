@@ -1,0 +1,66 @@
+name: Wayfinder ticket
+description: A research, prototype, grilling or task ticket hanging off a milestone map. Team use.
+labels: ["wayfinder:task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Wayfinder tickets are team work items that hang off a milestone map
+        issue. Add the matching `wayfinder:*` and milestone labels, and make
+        the ticket a sub-issue of its map.
+
+  - type: input
+    id: map
+    attributes:
+      label: Part of
+      description: The milestone map issue this hangs off, e.g. "#2".
+      placeholder: "#<map>"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      description: Also add the matching `wayfinder:*` and milestone labels.
+      options:
+        - "wayfinder:research (autonomous investigation, output is an ADR recommendation)"
+        - "wayfinder:grilling (pressure-test a decision with the team)"
+        - "wayfinder:prototype (throwaway spike, needs a human to judge)"
+        - "wayfinder:task (build work)"
+    validations:
+      required: true
+
+  - type: input
+    id: blocked-by
+    attributes:
+      label: Blocked by
+      placeholder: "#n, #n, or nothing"
+
+  - type: textarea
+    id: job
+    attributes:
+      label: Question or job
+      description: What this ticket settles or builds. One paragraph.
+    validations:
+      required: true
+
+  - type: textarea
+    id: done-when
+    attributes:
+      label: Done when
+      description: The concrete output. An ADR recommendation, a spike result, a merged change with its retrodiction case, a locked decision.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources needed
+      description: For anything biological, which values this ticket has to cite rather than assume.
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Links, prior art, constraints.
