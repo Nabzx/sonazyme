@@ -6,8 +6,8 @@ files, and appends entries recording what it did: inputs, model, version,
 parameters, scores and artefact paths. See
 docs/architecture/ARCHITECTURE.md.
 
-Nothing here is built yet. The manifest format is an M1 decision and arrives
-with its ADR, so this module holds only the error type and the stage list.
+The versioned manifest contract lives in core.manifest (ADR-0007). This module
+holds the error type and stage list so unbuilt stages can still name their milestone.
 """
 
 from __future__ import annotations

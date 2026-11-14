@@ -10,8 +10,8 @@ readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.11"
 authors = [{ name = "Nabil Shah" }]
-# No runtime dependencies yet. The manifest format, the service clients and the
-# scoring stack are M1 to M4 decisions and arrive with their ADRs.
+# Core persistence, target loading and the runner use the standard library.
+# Service clients and the scoring stack arrive with their own ADRs.
 dependencies = []
 
 [project.optional-dependencies]
