@@ -26,6 +26,27 @@ def test_a_table_without_the_fields_we_rely_on_is_refused():
         read_ranking(b"score,score_conservative,score_std,chain,position,wildtype,mutant\n")
 
 
+def test_a_single_score_model_needs_no_ensemble_columns():
+    """ThermoMPNN returns one number per mutation and no spread.
+
+    The conservative score falls back to the score, and the spread stays absent
+    rather than becoming a zero that would claim a certainty never reported.
+    """
+    single = b"""score,chain,position,wildtype,mutant,mutation
+1.09,A,100,C,F,C100F
+0.95,A,94,E,V,E94V
+0.85,A,64,D,A,D64A
+"""
+    ranking = read_ranking(single)
+    assert [row["mutation"] for row in ranking] == ["C100F", "E94V", "D64A"]
+    assert ranking[0]["score_conservative"] == ranking[0]["score"]
+    assert all(row["score_std"] is None for row in ranking)
+
+    kept, touched = split(ranking, SITE)
+    assert [row["mutation"] for row in kept] == ["C100F", "D64A"]
+    assert [row["mutation"] for row in touched] == ["E94V"]
+
+
 def test_the_site_is_separated_and_both_halves_are_kept():
     kept, touched = split(read_ranking(CSV), SITE)
     assert [row["mutation"] for row in kept] == ["H8L", "T135W"]

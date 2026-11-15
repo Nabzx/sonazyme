@@ -20,7 +20,12 @@ from uuid import uuid4
 from sonazyme.core.manifest import append
 from sonazyme.runs.store import RunStore
 
-REQUIRED = {"score", "score_conservative", "score_std", "chain", "position", "wildtype", "mutant"}
+REQUIRED = {"score", "chain", "position", "wildtype", "mutant"}
+
+# Some scorers run an ensemble and report a spread; others return one number per
+# mutation. A single-score model has no standard deviation to give, and writing a
+# zero there would assert a certainty it never reported, so the spread is left
+# absent and the conservative score falls back to the score itself.
 
 
 def read_ranking(data: bytes) -> list[dict]:
@@ -43,8 +48,14 @@ def read_ranking(data: bytes) -> list[dict]:
                     "wildtype": row["wildtype"],
                     "mutant": row["mutant"],
                     "score": float(row["score"]),
-                    "score_conservative": float(row["score_conservative"]),
-                    "score_std": float(row["score_std"]),
+                    "score_conservative": float(
+                        row.get("score_conservative") or row["score"]
+                    ),
+                    "score_std": (
+                        float(row["score_std"])
+                        if row.get("score_std") not in (None, "")
+                        else None
+                    ),
                 }
             )
         except (KeyError, TypeError, ValueError) as error:
