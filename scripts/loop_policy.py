@@ -123,8 +123,10 @@ def main(argv: list[str] | None = None) -> int:
                     "results": results,
                     # "hot,worst,where" -> a value for each action, action 0 is
                     # "do not dose" and action n+1 is "dose section n".
-                    "table": {",".join(map(str, state)): [round(v, 2) for v in values]
-                              for state, values in sorted(table.items())},
+                    "table": {
+                        ",".join(map(str, state)): [round(v, 2) for v in values]
+                        for state, values in sorted(table.items())
+                    },
                 }
             )
             + "\n"
