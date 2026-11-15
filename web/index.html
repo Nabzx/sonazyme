@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="description" content="Sonar finds biofilm inside data-centre cooling pipes. AI designs heat-stable enzymes that dissolve it. A demo." />
+<meta name="description" content="Customised enzyme design to combat bacterial biofilm build-ups in AI data centres. A demo." />
 <title>Sonazyme</title>
 <link rel="preload" href="fonts/instrument-serif-400.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="tokens.css" />
@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<a class="skip" href="#pipe">Skip to the story</a>
+<a class="skip" href="#problem">Skip to the story</a>
 
 <header class="nav" data-tone="light">
   <nav class="nav__pill" aria-label="Sections">
@@ -24,10 +24,10 @@
       </svg>
       <span>Sonazyme</span>
     </a>
-    <a href="#pipe">Pipe</a>
-    <a href="#sonar">Sonar</a>
-    <a href="#enzyme">Enzyme</a>
-    <a href="#workflow">Workflow</a>
+    <a href="#problem">Problem</a>
+    <a href="#solution">Solution</a>
+    <a href="#designer">Designer</a>
+    <a href="#variants">Variants</a>
   </nav>
 </header>
 
@@ -38,49 +38,57 @@
   <img class="hero__fallback" src="enzyme.png" alt="" />
   <div class="hero__inner wrap">
     <p class="eyebrow">Biofilm in data-centre cooling</p>
-    <h1 class="hero__title">
+    <h1 class="hero__title hero__title--statement">
       <span class="hero__line">
-        <span class="word">We</span>
-        <span class="word">use</span>
-        <span class="word">sonar</span>
+        <span class="word">Customised</span>
+        <span class="word">enzyme</span>
+        <span class="word">design</span>
         <span class="word">to</span>
-        <span class="word">detect</span>
+        <span class="word">combat</span>
+        <span class="word">bacterial</span>
         <span class="word">biofilm</span>
-        <span class="word">build-up</span>
-        <span class="word">in</span>
-        <span class="word">cooling</span>
-        <span class="word">pipes,</span>
+        <span class="word">build-ups</span>
       </span>
       <span class="hero__line hero__line--second">
-        <span class="word">then</span>
-        <span class="word">release</span>
-        <span class="word">enzymes</span>
-        <span class="word">designed</span>
-        <span class="word">to</span>
-        <span class="word">break</span>
-        <span class="word">it</span>
-        <span class="word">down.</span>
+        <span class="word">in</span>
+        <span class="word">AI</span>
+        <span class="word">data</span>
+        <span class="word">centres.</span>
       </span>
     </h1>
-    <p class="hero__sub">Like an ultrasound finding a blockage, then a medicine made to dissolve it.</p>
   </div>
   <div class="hero__foot wrap">
-    <a class="cue" href="#pipe"><span class="cue__line" aria-hidden="true"></span>Scroll</a>
+    <a class="cue" href="#problem"><span class="cue__line" aria-hidden="true"></span>Scroll</a>
     <p class="tag"><span class="tag__kind">Prediction</span>NucB structure, Boltz 2.2.1</p>
   </div>
 </section>
 
-<section class="pipe" id="pipe" data-beat="0" aria-label="Inside the pipe">
+<section class="pipe" id="problem" data-beat="0" aria-label="The problem, inside the pipe">
   <div class="pipe__stick">
     <canvas class="pipe__canvas scene" data-scene="pipe" aria-hidden="true"></canvas>
     <div class="pipe__shade" aria-hidden="true"></div>
-    <p class="pipe__label eyebrow">Inside the pipe</p>
+    <p class="pipe__label eyebrow">The Problem</p>
     <ol class="beats">
-      <li class="beat"><h2 class="beat__word">Water</h2><p class="beat__line">Cooling water runs through the pipe, all day.</p></li>
-      <li class="beat"><h2 class="beat__word">Settle</h2><p class="beat__line">Bacteria drift in and land on the wall.</p></li>
-      <li class="beat"><h2 class="beat__word">Glue</h2><p class="beat__line">They build a glue that holds them there.</p></li>
-      <li class="beat"><h2 class="beat__word">Biocide</h2><p class="beat__line">A chemical dose kills the cells at the surface.</p></li>
-      <li class="beat"><h2 class="beat__word">Regrowth</h2><p class="beat__line">The glue is still there. The cells come back.</p></li>
+      <li class="beat">
+        <p class="beat__n">01</p>
+        <h2 class="beat__word">Water cools AI data centres</h2>
+      </li>
+      <li class="beat">
+        <p class="beat__n">02</p>
+        <h2 class="beat__word">Bacteria settle on pipe walls</h2>
+      </li>
+      <li class="beat">
+        <p class="beat__n">03</p>
+        <h2 class="beat__word">They produce a biofilm that nests them there</h2>
+      </li>
+      <li class="beat">
+        <p class="beat__n">04</p>
+        <h2 class="beat__word">Toxic biocides used to remove them</h2>
+      </li>
+      <li class="beat beat--close">
+        <h2 class="beat__word">Bad for the environment.</h2>
+        <p class="beat__line">And the cells regrow anyway.</p>
+      </li>
     </ol>
     <div class="pipe__foot">
       <ol class="ticks" aria-hidden="true"><li></li><li></li><li></li><li></li><li></li></ol>
@@ -89,48 +97,45 @@
   </div>
 </section>
 
-<section class="section sonar" id="sonar">
+<section class="section solution" id="solution">
   <div class="wrap">
     <header class="section__head reveal">
-      <p class="eyebrow">Find it</p>
-      <h2 class="display">Sonar finds the film without opening the pipe.</h2>
+      <p class="eyebrow">Our solution</p>
+      <h2 class="display">Find the film, then dissolve it.</h2>
     </header>
-    <figure class="bench glass reveal">
-      <canvas class="bench__canvas" data-scene="sonar" tabindex="0" role="slider"
-        aria-label="Sonar probe position along the pipe" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12"
-        aria-valuetext="Clean wall"></canvas>
-      <figcaption class="bench__foot">
-        <p class="readout" data-state="clean" aria-hidden="true"><span class="readout__dot"></span><span class="readout__text">Clean wall</span></p>
-        <p class="bench__hint">Drag the probe along the pipe, or use the arrow keys.</p>
-        <p class="tag"><span class="tag__kind">Simulated</span>Echoes are not measurements</p>
-      </figcaption>
-    </figure>
-  </div>
-</section>
 
-<section class="section enzyme" id="enzyme">
-  <div class="wrap">
-    <header class="section__head reveal">
-      <p class="eyebrow">Dissolve it</p>
-      <h2 class="display">An enzyme made to cut the glue.</h2>
-      <p class="lead">It has to keep working in warm water. So the design stiffens the chain and leaves the cutting site alone.</p>
-    </header>
-    <div class="enzyme__grid">
-      <article class="card glass reveal" data-step="0">
+    <article class="move reveal">
+      <p class="move__n">01</p>
+      <h3 class="move__title">Sonar tracks the biofilm build ups</h3>
+      <figure class="bench glass">
+        <canvas class="bench__canvas" data-scene="sonar" tabindex="0" role="slider"
+          aria-label="Sonar probe position along the pipe" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12"
+          aria-valuetext="Clean wall"></canvas>
+        <figcaption class="bench__foot">
+          <p class="readout" data-state="clean" aria-hidden="true"><span class="readout__dot"></span><span class="readout__text">Clean wall</span></p>
+          <p class="bench__hint">Drag the probe along the pipe, or use the arrow keys.</p>
+          <p class="tag"><span class="tag__kind">Simulated</span>Echoes are not measurements</p>
+        </figcaption>
+      </figure>
+    </article>
+
+    <article class="move reveal">
+      <p class="move__n">02</p>
+      <h3 class="move__title">Specially designed enzymes deploy</h3>
+      <p class="move__lead">Genetic sequence modified to boost its thermostability</p>
+      <div class="card glass" data-step="0">
         <div class="card__stage">
           <canvas class="card__canvas scene" data-scene="card" aria-hidden="true"></canvas>
           <div class="card__tags">
             <p class="tag"><span class="tag__kind">Prediction</span>Shape: NucB, Boltz 2.2.1</p>
             <p class="tag"><span class="tag__kind">Literature</span>Cutting site: five catalytic residues</p>
-            <p class="tag"><span class="tag__kind">Prediction</span>Engineered region: HyperMPNN</p>
             <p class="tag"><span class="tag__kind">Illustration</span>Motion and heat</p>
           </div>
         </div>
         <ol class="steps">
-          <li><button class="step" type="button" data-step="0"><span class="step__n">01</span>Fold</button></li>
-          <li><button class="step" type="button" data-step="1"><span class="step__n">02</span>Cut</button></li>
-          <li><button class="step" type="button" data-step="2"><span class="step__n">03</span>Stiffen</button></li>
-          <li><button class="step" type="button" data-step="3"><span class="step__n">04</span>Heat</button></li>
+          <li><button class="step" type="button" data-step="0"><span class="step__n">01</span>Hold their shape at 35&ndash;45 degrees</button></li>
+          <li><button class="step" type="button" data-step="1"><span class="step__n">02</span>Lock onto proteins</button></li>
+          <li><button class="step" type="button" data-step="2"><span class="step__n">03</span>Break them down</button></li>
         </ol>
         <p class="card__line" aria-live="polite"></p>
         <div class="card__controls">
@@ -145,36 +150,9 @@
             <li class="legend__item legend__item--ochre">Biofilm glue</li>
           </ul>
         </div>
-      </article>
+      </div>
+    </article>
 
-      <figure class="talk reveal">
-        <div class="talk__frame glass">
-          <!-- VIDEO SEAM. Drop the talking-head mp4 in here, as the first child:
-               <video class="talk__video" src="media/scientist.mp4" controls preload="metadata" playsinline></video>
-               Register the file in STATIC_FILES in src/sonazyme/api/server.py.
-               The placeholder below hides itself as soon as a video element is present. -->
-          <div class="talk__placeholder">
-            <span class="talk__play" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" /></svg>
-            </span>
-            <p class="talk__slot">Video to come</p>
-          </div>
-        </div>
-        <figcaption class="talk__caption">
-          <p class="eyebrow">The scientist</p>
-          <p>The scientist explains the run: which design was chosen, and why.</p>
-        </figcaption>
-      </figure>
-    </div>
-  </div>
-</section>
-
-<section class="section workflow" id="workflow">
-  <div class="wrap">
-    <header class="section__head reveal">
-      <p class="eyebrow">The loop</p>
-      <h2 class="display">Listen. Design. Dose. Listen again.</h2>
-    </header>
     <figure class="plan glass reveal" data-beat="0">
       <canvas class="plan__canvas scene" data-scene="overhead" role="img"
         aria-label="A cooling loop seen from above. A sonar pulse finds a fouled patch, an enzyme is designed and dosed, and the patch clears."></canvas>
@@ -187,6 +165,111 @@
           <li>Clear</li>
         </ol>
         <p class="tag"><span class="tag__kind">Illustration</span>The intended workflow, not a readout</p>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section designer" id="designer">
+  <div class="wrap">
+    <header class="section__head section__head--centre reveal">
+      <p class="eyebrow">The demo</p>
+      <h2 class="display display--xl">Meet our AI enzyme designer</h2>
+      <p class="lead">Every structure below was predicted by Boltz 2.2.1 and every ranking by
+        ThermoMPNN, read from the saved run. Nothing here has been tested at a bench.</p>
+    </header>
+  </div>
+</section>
+
+<section class="section origin" id="origin">
+  <div class="wrap">
+    <div class="origin__grid">
+      <figure class="origin__stage glass reveal">
+        <canvas class="origin__canvas" data-demo="wildtype" tabindex="0" role="img"
+          aria-label="The predicted NucB structure. Drag to turn it, scroll to zoom."></canvas>
+        <figcaption class="origin__foot">
+          <p class="origin__hint">Drag to turn. Scroll to zoom. Arrow keys work too.</p>
+          <p class="tag"><span class="tag__kind">Prediction</span><span data-demo="wt-provenance">Boltz 2.2.1</span></p>
+        </figcaption>
+      </figure>
+
+      <div class="origin__data reveal">
+        <h3 class="origin__title">The original enzyme</h3>
+        <ol class="facts">
+          <li class="fact">
+            <p class="fact__n">1</p>
+            <p class="fact__key">Bacterial species</p>
+            <p class="fact__value fact__value--italic">Bacillus licheniformis</p>
+          </li>
+          <li class="fact">
+            <p class="fact__n">2</p>
+            <p class="fact__key">EPS composition</p>
+            <p class="fact__value">eDNA, polysaccharides, proteins</p>
+          </li>
+          <li class="fact">
+            <p class="fact__n">3</p>
+            <p class="fact__key">Target biomolecule</p>
+            <p class="fact__value">Extracellular DNA (eDNA)</p>
+          </li>
+          <li class="fact">
+            <p class="fact__n">4</p>
+            <p class="fact__key">Degrading enzyme</p>
+            <p class="fact__value">NucB (extracellular nuclease)</p>
+          </li>
+          <li class="fact fact--wide">
+            <p class="fact__n">5</p>
+            <p class="fact__key">FASTA sequence</p>
+            <p class="fact__value"><span data-demo="residue-count">142</span> amino acids</p>
+            <div class="fasta" data-demo="fasta" aria-label="The NucB precursor sequence"></div>
+            <ul class="fasta__key">
+              <li class="fasta__swatch fasta__swatch--site">Catalytic site</li>
+              <li class="fasta__swatch fasta__swatch--acidic">Acidic</li>
+              <li class="fasta__swatch fasta__swatch--basic">Basic</li>
+              <li class="fasta__swatch fasta__swatch--polar">Polar</li>
+              <li class="fasta__swatch fasta__swatch--hydro">Hydrophobic</li>
+              <li class="fasta__swatch fasta__swatch--special">Cys, Gly, Pro</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section variants" id="variants">
+  <div class="wrap">
+    <header class="section__head reveal">
+      <p class="eyebrow">Round two</p>
+      <h2 class="display">Iterative mutations testing</h2>
+      <p class="lead">ThermoMPNN scanned every single substitution in the folded chain and ranked
+        them. Mutations at the five catalytic residues were excluded before ranking. Each
+        survivor below was folded again by Boltz 2.2.1.</p>
+    </header>
+    <div class="variants__grid" data-demo="gallery">
+      <p class="variants__loading">Reading the saved run&hellip;</p>
+    </div>
+    <p class="variants__note tag"><span class="tag__kind">Prediction</span>ddG, confidence and displacement are model output, not measurements</p>
+  </div>
+</section>
+
+<section class="section talkback" id="scientist">
+  <div class="wrap">
+    <figure class="talk reveal">
+      <div class="talk__frame glass">
+        <!-- VIDEO SEAM. Drop the Synthesia talking-head mp4 in here, as the first child:
+             <video class="talk__video" src="media/scientist.mp4" controls preload="metadata" playsinline></video>
+             Register the file in STATIC_FILES in src/sonazyme/api/server.py.
+             The placeholder below hides itself as soon as a video element is present. -->
+        <div class="talk__placeholder">
+          <span class="talk__play" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" /></svg>
+          </span>
+          <p class="talk__slot">Video to come</p>
+        </div>
+      </div>
+      <figcaption class="talk__caption">
+        <p class="eyebrow">The scientist</p>
+        <p>The scientist explains the run: which design was chosen, and why.</p>
       </figcaption>
     </figure>
   </div>

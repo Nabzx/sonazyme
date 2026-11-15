@@ -48,6 +48,16 @@
   --ink-muted: #475569;
   --ink-faint: #94a3b8;
 
+  /* Sequence reading aid. Deliberately desaturated, so that none of these can
+     be mistaken for the three meaning colours above. They group residues by
+     chemistry for legibility and carry no claim about the protein. */
+  --aa-acidic: #8a6577;
+  --aa-basic: #64748b;
+  --aa-polar: #5f7f8c;
+  --aa-hydro: #857f6e;
+  --aa-special: #77708d;
+  --aa-other: #94a3b8;
+
   /* Tints, for fills that must stay quiet on white */
   --cobalt-tint: #e0f2fe;
   --teal-tint: #ccfbf1;
@@ -86,6 +96,7 @@
   --size-hero: clamp(2.05rem, 4.35vw, 4.4rem);
   --size-display: clamp(2.2rem, 4.6vw, 4rem);
   --size-beat: clamp(4.5rem, 17vw, 15rem);
+  --size-beat-line: clamp(1.75rem, 4.6vw, 3.9rem);
   --size-lead: clamp(1.02rem, 1.3vw, 1.2rem);
   --size-body: 1rem;
   --size-small: 0.875rem;

@@ -23,6 +23,7 @@ STATIC_FILES = {
     "app.mjs": JS,
     "lib/api.mjs": JS,
     "lib/data.mjs": JS,
+    "lib/demo.mjs": JS,
     "lib/viewer.mjs": JS,
     "lib/protein.mjs": JS,
     "lib/pipe.mjs": JS,

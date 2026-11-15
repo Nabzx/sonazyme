@@ -2,6 +2,7 @@
 // Served under a strict CSP: nothing here writes an inline style. State goes
 // to the page through classes and data attributes only.
 import { notice } from "./lib/data.mjs";
+import { mountDemo } from "./lib/demo.mjs";
 import { mountOverhead } from "./lib/overhead.mjs";
 import { mountPipe } from "./lib/pipe.mjs";
 import { mountProtein } from "./lib/protein.mjs";
@@ -59,7 +60,7 @@ const reveal = new IntersectionObserver(
 document.querySelectorAll(".reveal").forEach((node) => reveal.observe(node));
 
 // The pipe.
-const pipeSection = $("#pipe");
+const pipeSection = $(".pipe");
 const pipe = register($('[data-scene="pipe"]'), (canvas) => mountPipe(canvas, { reduced }));
 const nav = $(".nav");
 let beat = -1;
@@ -109,12 +110,14 @@ register($('[data-scene="overhead"]'), (canvas) =>
 );
 
 // The enzyme, in the hero and in the card. One fetch, the only real data here.
+// The three moves the designed enzyme makes, in the order the page tells them.
+// `heat` is an illustration of warm water, never a temperature reading.
 const STEPS = [
-  { line: "The chain folds into its working shape.", state: { assemble: 1, site: 0, region: 0, dock: 0 } },
-  { line: "The cutting site meets a strand of the glue, and cuts it.", state: { assemble: 1, site: 1, region: 0, dock: 1 } },
-  { line: "The design stiffens a region away from the cutting site.", state: { assemble: 1, site: 1, region: 1, dock: 1 } },
-  { line: "Heat shakes the chain. The cutting site holds.", state: { assemble: 1, site: 1, region: 1, dock: 1 } },
+  { line: "Warm water shakes the chain. The designed region holds its shape.", heat: 0.7, state: { assemble: 1, site: 0, region: 1, dock: 0 } },
+  { line: "The enzyme meets a strand of the glue and locks on.", heat: 0.7, state: { assemble: 1, site: 0, region: 1, dock: 1 } },
+  { line: "The cutting site breaks the strand down.", heat: 0.7, state: { assemble: 1, site: 1, region: 1, dock: 1 } },
 ];
+const LAST = STEPS.length - 1;
 const card = $(".card");
 const cardLine = $(".card__line");
 const heat = $(".heat__range");
@@ -128,9 +131,8 @@ function showStep(index) {
   since = 0;
   card.dataset.step = String(index);
   cardLine.textContent = STEPS[index].line;
-  if (index === 3 && Number(heat.value) < 5) heat.value = "70";
-  if (index < 3) heat.value = "0";
-  cardScene?.set({ ...STEPS[index].state, heat: index === 3 ? Number(heat.value) / 100 : 0 });
+  heat.value = String(Math.round(STEPS[index].heat * 100));
+  cardScene?.set({ ...STEPS[index].state, heat: STEPS[index].heat });
 }
 
 async function startEnzyme() {
@@ -145,11 +147,7 @@ async function startEnzyme() {
       hero.point((event.clientX / window.innerWidth) * 2 - 1, (event.clientY / window.innerHeight) * 2 - 1);
     });
   }
-  if (reduced) {
-    showStep(3);
-    heat.value = "0";
-    cardScene?.set({ ...STEPS[3].state, heat: 0 });
-  }
+  if (reduced) showStep(LAST);
   card.querySelectorAll(".step").forEach((button) => {
     button.addEventListener("click", () => {
       auto = false;
@@ -158,11 +156,6 @@ async function startEnzyme() {
   });
   heat.addEventListener("input", () => {
     auto = false;
-    if (step !== 3) {
-      const value = heat.value;
-      showStep(3);
-      heat.value = value;
-    }
     cardScene?.set({ heat: Number(heat.value) / 100 });
   });
 }
@@ -203,7 +196,7 @@ function tick(now) {
     if (step < 0) showStep(0);
     since += dt;
     if (since > (step === 0 ? 4.2 : 3.8)) {
-      if (step < 3) showStep(step + 1);
+      if (step < LAST) showStep(step + 1);
       else auto = false;
     }
   }
@@ -214,4 +207,19 @@ requestAnimationFrame(tick);
 startEnzyme().catch((error) => {
   console.warn(error);
   $(".hero")?.classList.add("no-webgl");
+});
+
+// The demo reads the saved run. If no run is present the page still works; the
+// gallery says so rather than showing an empty frame.
+mountDemo(document).catch((error) => {
+  console.warn(error);
+  const gallery = $('[data-demo="gallery"]');
+  if (gallery) {
+    gallery.replaceChildren();
+    const message = document.createElement("p");
+    message.className = "variants__loading";
+    message.textContent =
+      "No saved run could be read. Start the API with --runs-dir pointing at a run.";
+    gallery.append(message);
+  }
 });
