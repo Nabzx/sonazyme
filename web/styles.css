@@ -368,6 +368,8 @@ canvas { display: block; }
 @media (prefers-reduced-motion: reduce) {
   .word, .hero__sub, .hero__foot, .cue__line { animation: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
-  .pipe { height: 100vh; height: 100svh; }
+  /* Keep the five beats reachable. Scrolling still steps through them; what
+     reduced motion removes is the camera flight and the drift, not the story. */
+  .pipe { height: 300vh; }
   .beat { transition: none; }
 }

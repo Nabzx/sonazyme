@@ -1,7 +1,7 @@
 // The workflow, seen from above: racks, a cooling loop, the module beside the
 // pipe. A depiction of the intended cycle, not a readout of anything.
 import * as THREE from "../vendor/three.module.js";
-import { clamp, colour, fit, lerp, smooth } from "./tokens.mjs";
+import { clamp, colour, damp, fit, lerp, smooth } from "./tokens.mjs";
 
 const PIPE_Y = 0.42;
 const CYCLE = 13;
@@ -41,8 +41,11 @@ export function mountOverhead(canvas, { reduced = false, onBeat = () => {} } = {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 200);
-  camera.position.set(0, 44, 21);
+  const CAMERA_Y = 44;
+  const CAMERA_Z = 21;
+  camera.position.set(0, CAMERA_Y, CAMERA_Z);
   camera.lookAt(-0.5, 0, 0.4);
+  const drift = { value: 0.5, target: 0.5 };
 
   scene.add(new THREE.HemisphereLight(0xffffff, colour("--border"), 1.15));
   const sun = new THREE.DirectionalLight(0xffffff, 2.05);
@@ -209,8 +212,14 @@ export function mountOverhead(canvas, { reduced = false, onBeat = () => {} } = {
     camera.userData.ready = true;
   }
 
-  function update(time) {
+  function update(time, dt) {
     frame();
+    // The viewpoint lifts a little as the section crosses the screen, so the
+    // layout reads as a surface being looked at rather than a flat picture.
+    drift.value = reduced ? drift.target : damp(drift.value, drift.target, 4, dt ?? 0.016);
+    const lean = (drift.value - 0.5) * 2;
+    camera.position.set(lean * -1.6, CAMERA_Y + lean * 3.2, CAMERA_Z - lean * 2.4);
+    camera.lookAt(-0.5, 0, 0.4);
     if (started === null) started = time;
     const t = reduced ? 0.66 : ((time - started) % CYCLE) / CYCLE;
     let now = 0;
@@ -292,5 +301,11 @@ export function mountOverhead(canvas, { reduced = false, onBeat = () => {} } = {
     renderer.render(scene, camera);
   }
 
-  return { update };
+  return {
+    update,
+    // 0 as the section enters from below, 1 as it leaves at the top.
+    scroll(value) {
+      drift.target = clamp(value);
+    },
+  };
 }

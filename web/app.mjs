@@ -73,7 +73,7 @@ function trackPipe() {
   }
   const progress = pinProgress(pipeSection);
   pipe?.progress(progress);
-  const nextBeat = reduced ? 4 : Math.min(4, Math.floor(progress * 5));
+  const nextBeat = Math.min(4, Math.floor(progress * 5));
   if (nextBeat !== beat) {
     beat = nextBeat;
     pipeSection.dataset.beat = String(beat);
@@ -99,7 +99,8 @@ register(sonarCanvas, (canvas) =>
 
 // The workflow.
 const plan = $(".plan");
-register($('[data-scene="overhead"]'), (canvas) =>
+const workflowSection = $("#workflow");
+const overhead = register($('[data-scene="overhead"]'), (canvas) =>
   mountOverhead(canvas, {
     reduced,
     onBeat(index) {
@@ -120,6 +121,7 @@ const cardLine = $(".card__line");
 const heat = $(".heat__range");
 let cardScene = null;
 let step = -1;
+let heroScene = null;
 let auto = !reduced;
 let since = 0;
 
@@ -138,6 +140,7 @@ async function startEnzyme() {
   if (!response.ok) throw new Error("Enzyme trace could not be loaded");
   const data = await response.json();
   const hero = register($('[data-scene="hero"]'), (canvas) => mountProtein(canvas, data, { mode: "hero", reduced }));
+  heroScene = hero;
   cardScene = register($('[data-scene="card"]'), (canvas) => mountProtein(canvas, data, { mode: "card", reduced }));
   observe();
   if (hero) {
@@ -167,6 +170,19 @@ async function startEnzyme() {
   });
 }
 
+// Scroll parallax: the hero drifts as it leaves, and the overhead leans as it
+// crosses. Both are driven by scroll position, so neither moves on its own.
+function trackParallax() {
+  if (heroScene) {
+    heroScene.scroll(window.scrollY / Math.max(1, window.innerHeight));
+  }
+  if (overhead && workflowSection) {
+    const rect = workflowSection.getBoundingClientRect();
+    const span = rect.height + window.innerHeight;
+    overhead.scroll(span > 0 ? (window.innerHeight - rect.top) / span : 0.5);
+  }
+}
+
 // Scenes draw only while on screen.
 const watch = new IntersectionObserver(
   (entries) => {
@@ -193,6 +209,7 @@ function tick(now) {
   previous = now;
   scroll.update(dt);
   trackPipe();
+  trackParallax();
   const time = now / 1000;
   for (const entry of scenes) {
     if (entry.visible) entry.scene.update(time, dt);

@@ -225,7 +225,7 @@ export function mountPipe(canvas, { reduced = false } = {}) {
 
   const q = new THREE.Quaternion();
   const tint = new THREE.Color();
-  let progress = reduced ? 0.93 : 0;
+  let progress = 0;
   let goal = progress;
   let clock = 0;
 
@@ -304,7 +304,9 @@ export function mountPipe(canvas, { reduced = false } = {}) {
   return {
     update,
     progress(value) {
-      if (!reduced) goal = lerp(0, 1, clamp(value));
+      // Scroll drives the beats in both modes. Under reduced motion the scene
+      // simply does not animate between them: the clock stays still.
+      goal = lerp(0, 1, clamp(value));
     },
   };
 }

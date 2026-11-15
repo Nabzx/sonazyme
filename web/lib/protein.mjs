@@ -187,6 +187,8 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
   const state = { assemble: mode === "hero" ? 1 : 0, site: mode === "hero" ? 1 : 0, region: 0, heat: 0, dock: 0 };
   const target = { ...state };
   const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+  const drift = { value: 0, target: 0 };
+  let baseY = 0;
   const dummy = new THREE.Object3D();
   const tint = new THREE.Color();
   const turn = new THREE.Quaternion();
@@ -199,6 +201,7 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
       camera.position.z = wide ? 150 : 235;
       const halfH = Math.tan((camera.fov * Math.PI) / 360) * camera.position.z;
       rig.position.set(wide ? halfH * (w / h) * 0.54 : 0, wide ? 2 : halfH * 0.4, 0);
+      baseY = rig.position.y;
     } else {
       camera.position.z = w / h > 0.95 ? 146 : 172;
       rig.position.set(4, w / h > 0.95 ? 3 : 9, 0);
@@ -290,9 +293,14 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
 
     if (strand.visible) drawStrand();
 
-    // Rotation and pointer parallax.
+    // Rotation, pointer parallax, and the scroll drift in the hero.
     pointer.x = damp(pointer.x, pointer.tx, 3, step);
     pointer.y = damp(pointer.y, pointer.ty, 3, step);
+    if (mode === "hero") {
+      drift.value = reduced ? drift.target : damp(drift.value, drift.target, 6, step);
+      rig.position.y = baseY + drift.value * 26;
+      rig.position.z = drift.value * -34;
+    }
     if (mode === "hero") {
       euler.set(0.18 + pointer.y * 0.22, clock * 0.16 + pointer.x * 0.45, 0);
       spin.quaternion.setFromEuler(euler);
@@ -352,6 +360,10 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
       if (reduced) return;
       pointer.tx = x;
       pointer.ty = y;
+    },
+    // 0 at the top of the page, 1 once the hero has scrolled away.
+    scroll(value) {
+      drift.target = clamp(value);
     },
   };
 }
