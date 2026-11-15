@@ -10,6 +10,8 @@ from pathlib import Path
 from sonazyme.api.server import Application, make_server
 from sonazyme.api.snapshots import export_snapshot, read_snapshot, restore_snapshot
 
+DEFAULT_STRUCTURE_DIRECTORY = Path(__file__).resolve().parents[3] / "assets" / "structures"
+
 
 def main(argv: list[str] | None = None) -> None:
     """Serve local data without running models or publishing a hosted site."""
@@ -38,6 +40,7 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runs-dir", type=Path, default=Path("runs"))
     parser.add_argument("--web-dir", type=Path)
+    parser.add_argument("--structures-dir", type=Path, default=DEFAULT_STRUCTURE_DIRECTORY)
     parser.add_argument("--port", type=int, default=8000)
     args = parser.parse_args(arguments)
     if args.web_dir is not None and not (args.web_dir / "index.html").is_file():
@@ -45,7 +48,14 @@ def main(argv: list[str] | None = None) -> None:
             2, "Optional dashboard files not found at --web-dir. Omit it for API-only mode.\n"
         )
     try:
-        server = make_server(Application(args.runs_dir, args.web_dir), args.port)
+        server = make_server(
+            Application(
+                args.runs_dir,
+                args.web_dir,
+                structure_directory=args.structures_dir,
+            ),
+            args.port,
+        )
     except (OSError, OverflowError) as error:
         parser.exit(2, f"Cannot start API: {error}\n")
     print(f"Sonazyme API: http://127.0.0.1:{server.server_port}", flush=True)

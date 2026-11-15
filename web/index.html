@@ -8,6 +8,7 @@
 <link rel="preload" href="fonts/instrument-serif-400.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="styles.css" />
+<script defer src="vendor/3Dmol-min.js"></script>
 <script type="module" src="app.mjs"></script>
 </head>
 <body>
@@ -196,41 +197,48 @@
 <section class="section examples" id="examples" aria-labelledby="examples-heading">
   <div class="wrap">
     <header class="section__head reveal">
-      <p class="eyebrow">Biofilm-targeting enzymes</p>
-      <h2 class="display" id="examples-heading">A different tool<br />for every layer.</h2>
-      <p class="lead">Real enzyme examples, shown as AI-generated visual concepts.</p>
+      <p class="eyebrow">Round two</p>
+      <h2 class="display" id="examples-heading">Every change,<br />folded again.</h2>
+      <p class="lead">A scorer ranked every single substitution in the chain, with the catalytic
+        residues held out. Each survivor was folded again by Boltz 2.2.1, and the models are
+        below. Colour is the confidence the folder itself reported.</p>
     </header>
-    <figure class="gallery glass reveal" aria-roledescription="carousel" aria-label="Enzyme concepts">
-      <div class="gallery__stage">
-        <div class="gallery__orbit" aria-hidden="true"></div>
-        <canvas class="gallery__canvas" data-scene="concepts" tabindex="0"
-          aria-label="3D enzyme concept wheel. Use left and right arrows to explore."></canvas>
-        <p class="gallery__hint">Drag to turn · Scroll to explore</p>
-        <div class="gallery__fallback" aria-hidden="true"></div>
+    <div class="reveal">
+      <section class="local-structures" data-local-structures aria-labelledby="local-structures-title">
+      <div class="local-structures__controls">
+        <label class="local-structures__field">
+          <span>Prediction folder</span>
+          <select data-local-structure-group disabled aria-label="Local prediction folder"></select>
+        </label>
+        <label class="local-structures__field">
+          <span>Structure file</span>
+          <select data-local-structure-file disabled aria-label="Local structure file"></select>
+        </label>
       </div>
-      <figcaption class="gallery__foot">
-        <div class="gallery__copy" aria-live="polite" aria-atomic="true">
-          <p class="eyebrow" data-concept-family>Extracellular DNA</p>
-          <h3 class="gallery__name" data-concept-name>NucB</h3>
-          <p class="gallery__description" data-concept-description>Cuts DNA outside bacterial cells, one of the strands that helps hold a biofilm together.</p>
-          <a class="gallery__source" data-concept-source href="https://doi.org/10.1371/journal.pone.0015668" target="_blank" rel="noopener noreferrer">Research paper ↗</a>
+      <p class="local-structures__status" data-local-structure-status role="status" aria-live="polite">
+        Reading local structure files…
+      </p>
+      <div class="local-structures__viewport" data-local-structure-viewer role="region"
+        aria-label="Interactive 3D protein structure viewer"></div>
+      <p class="local-structures__loading" data-local-structure-loading role="status" hidden>
+        Loading structure…
+      </p>
+      <p class="local-structures__error" data-local-structure-error role="alert" hidden></p>
+      <div class="local-structures__legend" aria-label="Confidence colour scale">
+        <p class="local-structures__legend-title">Confidence / B-factor scale</p>
+        <div class="local-structures__gradient" aria-hidden="true"></div>
+        <div class="local-structures__legend-values" aria-hidden="true">
+          <span>0</span><span>50</span><span>100</span>
         </div>
-        <div class="gallery__controls">
-          <div class="gallery__arrows">
-            <button class="gallery__arrow" type="button" data-concept-direction="-1" aria-label="Previous enzyme concept">←</button>
-            <span class="gallery__count" data-concept-count>01 / 05</span>
-            <button class="gallery__arrow" type="button" data-concept-direction="1" aria-label="Next enzyme concept">→</button>
-          </div>
-          <div class="gallery__tabs" role="group" aria-label="Choose an enzyme concept">
-            <button type="button" data-concept="0" aria-label="NucB" aria-pressed="true"></button>
-            <button type="button" data-concept="1" aria-label="PslG" aria-pressed="false"></button>
-            <button type="button" data-concept="2" aria-label="PelA hydrolase" aria-pressed="false"></button>
-            <button type="button" data-concept="3" aria-label="Dispersin B" aria-pressed="false"></button>
-            <button type="button" data-concept="4" aria-label="Alg2A" aria-pressed="false"></button>
-          </div>
-        </div>
-      </figcaption>
-    </figure>
+        <p data-local-structure-confidence>
+          Colouring uses stored per-atom B-factor values when available. Values are not recalculated.
+        </p>
+      </div>
+      <p class="local-structures__hint">
+        Drag to rotate. Use the middle mouse button or Ctrl+drag to pan. Scroll to zoom.
+      </p>
+    </section>
+    </div>
   </div>
 </section>
 

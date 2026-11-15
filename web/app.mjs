@@ -1,7 +1,7 @@
 // Sonazyme front page. Wires the scroll, the scenes and the small controls.
 // Served under a strict CSP: nothing here writes an inline style. State goes
 // to the page through classes and data attributes only.
-import { mountConcepts } from "./lib/concepts.mjs";
+import { mountLocalStructures } from "./lib/structures.mjs";
 import { mountFilm } from "./lib/film.mjs";
 import { mountOverhead } from "./lib/overhead.mjs";
 import { mountPipe } from "./lib/pipe.mjs";
@@ -90,15 +90,8 @@ register(sonarCanvas, (canvas) =>
   }),
 );
 
-// Literature-backed examples, displayed as stylised visual concepts.
-async function startConcepts() {
-  const response = await fetch("data/enzyme-examples.json");
-  if (!response.ok) throw new Error("Enzyme examples could not be loaded");
-  const catalogue = await response.json();
-  register($('[data-scene="concepts"]'), (canvas) =>
-    mountConcepts(canvas, { reduced, concepts: catalogue.examples }));
-  observe();
-}
+// The folded redesigns, read from the local model folder.
+mountLocalStructures().catch((error) => console.warn("Local structures unavailable", error));
 
 // The workflow.
 const plan = $(".plan");
@@ -270,8 +263,4 @@ requestAnimationFrame(tick);
 startEnzyme().catch((error) => {
   console.warn(error);
   if (!heroScene) $(".hero")?.classList.add("no-webgl");
-});
-startConcepts().catch((error) => {
-  console.warn(error);
-  $(".gallery")?.classList.add("no-webgl");
 });

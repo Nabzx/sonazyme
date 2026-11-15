@@ -512,3 +512,56 @@ canvas { display: block; }
   .gallery__arrows { gap: var(--s3); }
   .gallery__hint { font-size: 0.75rem; }
 }
+
+/* The folded redesigns, brought over from the ThermoMPNN branch. */
+.local-structures {
+  display: grid; gap: var(--s4); margin-block-start: var(--s12);
+  padding: var(--s5); border: 1px solid var(--border);
+  border-radius: var(--radius); background: var(--card-surface);
+}
+.local-structures__head { display: grid; gap: var(--s2); }
+.local-structures__head h3, .local-structures__head p { margin: 0; }
+.local-structures__controls {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--s4);
+}
+.local-structures__field {
+  display: flex; flex-direction: column; gap: var(--s1);
+  font-size: var(--size-small);
+}
+.local-structures__field select {
+  width: 100%; min-height: 2.75rem; padding: var(--s2) var(--s3);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--sterile-white); color: var(--ink); font: inherit;
+}
+.local-structures__field select:focus-visible {
+  outline: 2px solid var(--cobalt-hydro); outline-offset: 2px;
+}
+.local-structures__viewport {
+  position: relative; width: 100%; height: clamp(24rem, 56vw, 42rem);
+  min-height: 24rem; overflow: hidden; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: #fff;
+}
+.local-structures__viewport canvas { display: block; width: 100%; height: 100%; }
+.local-structures__status, .local-structures__loading, .local-structures__error,
+.local-structures__hint { margin: 0; font-size: var(--size-small); }
+.local-structures__status, .local-structures__loading, .local-structures__hint {
+  color: var(--ink-muted);
+}
+.local-structures__error {
+  padding: var(--s3); border-radius: var(--radius-sm);
+  color: #9f1239; background: #fff1f2;
+}
+.local-structures__legend {
+  display: grid; gap: var(--s2); max-width: 36rem; font-size: var(--size-small);
+}
+.local-structures__legend p { margin: 0; }
+.local-structures__legend-title { font-weight: 500; }
+.local-structures__gradient {
+  height: 0.75rem; border-radius: 999px;
+  background: linear-gradient(90deg, #2166ac, #f7f7f7 50%, #b2182b);
+}
+.local-structures__legend-values {
+  display: flex; justify-content: space-between; color: var(--ink-muted);
+  font-family: var(--mono); font-size: var(--size-micro);
+}
