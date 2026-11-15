@@ -39,3 +39,15 @@ web/
 One small component that takes a manifest entry and renders the model, the
 version and the word predicted. It appears on every number in the app. If a
 value cannot produce one, it does not get displayed.
+
+## Local structure viewer
+
+The variants screen discovers PDB, ENT, CIF and mmCIF files beneath the
+configured structure directory and renders them locally with 3Dmol.js. It
+does not call the Tamarind API. Only structure files in that directory are
+available to the viewer.
+
+Run the dashboard with `python -m sonazyme.api --web-dir web`. The default
+structure directory is the local `3D models` folder configured in
+`src/sonazyme/api/__main__.py`. On another machine, pass `--structures-dir
+"C:\path\to\3D models"` to point at that machine's files.

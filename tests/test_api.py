@@ -124,6 +124,39 @@ def test_optional_static_root_is_allowlisted(saved, tmp_path):
     assert app.get("/styles.css").status == 404
 
 
+def test_local_structure_files_are_grouped_and_served_by_identity(tmp_path):
+    root = tmp_path / "models"
+    job = root / "result-nucb-C68F-fold"
+    predictions = job / "predictions" / "result"
+    predictions.mkdir(parents=True)
+    (job / "best.cif").write_bytes(b"data_best\n")
+    (predictions / "result_model_0.pdb").write_bytes(b"ATOM local model\n")
+    (job / "settings.json").write_text("not a structure")
+    app = Application(tmp_path / "runs", structure_directory=root)
+
+    response = app.get("/local-structures.json")
+    assert response.status == 200
+    groups = decoded(response)["groups"]
+    assert [group["name"] for group in groups] == ["result-nucb-C68F-fold"]
+    structures = groups[0]["structures"]
+    assert [item["name"] for item in structures] == [
+        "best.cif",
+        "predictions/result/result_model_0.pdb",
+    ]
+    assert [item["format"] for item in structures] == ["cif", "pdb"]
+    assert app.get(f"/local-structures/{structures[0]['id']}").body == b"data_best\n"
+    assert app.get(f"/local-structures/{structures[1]['id']}").body == b"ATOM local model\n"
+    assert app.get("/local-structures/" + "0" * 64).status == 404
+    assert app.get("/local-structures/../settings.json").status == 404
+
+
+def test_local_structure_index_reports_missing_directory(tmp_path):
+    app = Application(tmp_path / "runs", structure_directory=tmp_path / "missing")
+    response = app.get("/local-structures.json")
+    assert response.status == 503
+    assert b"local structure directory is unavailable" in response.body
+
+
 def test_snapshot_round_trip_preserves_sealed_manifest_and_bytes(saved, tmp_path):
     _, store, _ = saved
     store.save(finish(append(store.load(), attempt())))

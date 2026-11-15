@@ -7,6 +7,7 @@ import { mountPipe } from "./lib/pipe.mjs";
 import { mountProtein } from "./lib/protein.mjs";
 import { createScroll, pinProgress } from "./lib/scroll.mjs";
 import { mountSonar } from "./lib/sonar.mjs";
+import { mountLocalStructures } from "./lib/structures.mjs";
 
 const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -206,6 +207,17 @@ requestAnimationFrame(tick);
 startEnzyme().catch((error) => {
   console.warn(error);
   $(".hero")?.classList.add("no-webgl");
+});
+
+mountLocalStructures(document).catch((error) => {
+  const status = $("[data-local-structure-status]");
+  const errorNode = $("[data-local-structure-error]");
+  if (status) status.textContent = "Local structures could not be loaded.";
+  if (errorNode) {
+    errorNode.textContent = error instanceof Error ? error.message : String(error);
+    errorNode.hidden = false;
+  }
+  console.warn("Local structure viewer could not start", error);
 });
 
 // The demo reads the saved run. It is loaded on its own, so that if its module

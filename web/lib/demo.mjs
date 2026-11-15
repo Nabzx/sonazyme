@@ -118,6 +118,53 @@ function card(entry, record, label) {
   return { figure, canvas };
 }
 
+function renderStabilityWriteup(root, record) {
+  const writeup = record?.stability_writeup;
+  const panel = root.querySelector('[data-demo="stability-writeup"]');
+  if (!writeup || !panel) return;
+
+  panel.hidden = false;
+  root.querySelector('[data-demo="stability-summary"]').textContent = writeup.summary;
+  root.querySelector('[data-demo="stability-summary-citations"]').textContent =
+    `Run entries: ${(writeup.summary_citations || []).join(", ")}`;
+  const selection = root.querySelector('[data-demo="stability-selection"]');
+  selection.hidden = !writeup.selected_candidate;
+  if (writeup.selected_candidate) {
+    root.querySelector('[data-demo="stability-selection-code"]').textContent =
+      writeup.selected_candidate.code;
+    root.querySelector('[data-demo="stability-selection-rationale"]').textContent =
+      writeup.selected_candidate.rationale;
+    root.querySelector('[data-demo="stability-selection-citations"]').textContent =
+      `Run entries: ${(writeup.selected_candidate.citations || []).join(", ")}`;
+  }
+  const comparisons = root.querySelector('[data-demo="stability-comparisons"]');
+  comparisons.replaceChildren();
+  if (writeup.measured_comparisons?.length) {
+    comparisons.append(el("h4", "", "Measured comparisons"));
+    for (const comparison of writeup.measured_comparisons) {
+      const item = el("p", "", comparison.text);
+      item.append(el("span", "stability-writeup__citation",
+        ` Run entries: ${(comparison.citations || []).join(", ")}`));
+      comparisons.append(item);
+    }
+  } else {
+    comparisons.append(
+      el("p", "", "No comparable measured comparison was produced from this run's records.")
+    );
+  }
+
+  const trainingData = writeup.training_data_comparison;
+  root.querySelector('[data-demo="stability-training-data"]').textContent =
+    trainingData?.message ||
+    "No training-data records were supplied. No comparison with Adaption's training data was made.";
+
+  const limitations = root.querySelector('[data-demo="stability-limitations"]');
+  limitations.replaceChildren();
+  for (const limitation of writeup.limitations || []) {
+    limitations.append(el("li", "", limitation));
+  }
+}
+
 export async function mountDemo(root) {
   const gallery = root.querySelector('[data-demo="gallery"]');
   const wildCanvas = root.querySelector('[data-demo="wildtype"]');
@@ -130,6 +177,12 @@ export async function mountDemo(root) {
   const run = await openRun(runs[0]);
   const { parent, variants } = foldEntries(run.manifest);
   if (!parent) throw new Error("The saved run holds no folded structure.");
+  const explanation = [...run.manifest.entries]
+    .reverse()
+    .find(entry => entry.stage === "explain" && entry.status === "succeeded");
+  if (explanation?.artefacts?.[0]) {
+    renderStabilityWriteup(root, await run.json(explanation.artefacts[0]));
+  }
 
   const parentRecord = await run.json(parent.artefacts[0]);
   const site = parentRecord.active_site || [];

@@ -8,6 +8,7 @@
 <link rel="preload" href="fonts/instrument-serif-400.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="styles.css" />
+<script defer src="vendor/3Dmol-min.js"></script>
 <script type="module" src="app.mjs"></script>
 </head>
 <body>
@@ -48,8 +49,6 @@
         <span class="word">bacterial</span>
         <span class="word">biofilm</span>
         <span class="word">build-ups</span>
-      </span>
-      <span class="hero__line hero__line--second">
         <span class="word">in</span>
         <span class="word">AI</span>
         <span class="word">data</span>
@@ -67,7 +66,7 @@
   <div class="pipe__stick">
     <canvas class="pipe__canvas scene" data-scene="pipe" aria-hidden="true"></canvas>
     <div class="pipe__shade" aria-hidden="true"></div>
-    <p class="pipe__label eyebrow">The Problem</p>
+    <h3 class="pipe__label eyebrow">The Problem</h3>
     <ol class="beats">
       <li class="beat">
         <p class="beat__n">01</p>
@@ -245,9 +244,62 @@
         them. Mutations at the five catalytic residues were excluded before ranking. Each
         survivor below was folded again by Boltz 2.2.1.</p>
     </header>
+    <section class="local-structures" data-local-structures aria-labelledby="local-structures-title">
+      <div class="local-structures__controls">
+        <label class="local-structures__field">
+          <span>Prediction folder</span>
+          <select data-local-structure-group disabled aria-label="Local prediction folder"></select>
+        </label>
+        <label class="local-structures__field">
+          <span>Structure file</span>
+          <select data-local-structure-file disabled aria-label="Local structure file"></select>
+        </label>
+      </div>
+      <p class="local-structures__status" data-local-structure-status role="status" aria-live="polite">
+        Reading local structure files…
+      </p>
+      <div class="local-structures__viewport" data-local-structure-viewer role="region"
+        aria-label="Interactive 3D protein structure viewer"></div>
+      <p class="local-structures__loading" data-local-structure-loading role="status" hidden>
+        Loading structure…
+      </p>
+      <p class="local-structures__error" data-local-structure-error role="alert" hidden></p>
+      <div class="local-structures__legend" aria-label="Confidence colour scale">
+        <p class="local-structures__legend-title">Confidence / B-factor scale</p>
+        <div class="local-structures__gradient" aria-hidden="true"></div>
+        <div class="local-structures__legend-values" aria-hidden="true">
+          <span>0</span><span>50</span><span>100</span>
+        </div>
+        <p data-local-structure-confidence>
+          Colouring uses stored per-atom B-factor values when available. Values are not recalculated.
+        </p>
+      </div>
+      <p class="local-structures__hint">
+        Drag to rotate. Use the middle mouse button or Ctrl+drag to pan. Scroll to zoom.
+      </p>
+    </section>
     <div class="variants__grid" data-demo="gallery">
       <p class="variants__loading">Reading the saved run&hellip;</p>
     </div>
+    <section class="stability-writeup" data-demo="stability-writeup" hidden
+      aria-labelledby="stability-writeup-title" aria-live="polite">
+      <h3 id="stability-writeup-title">Adaption's final candidate report</h3>
+      <p data-demo="stability-summary"></p>
+      <p class="stability-writeup__citation" data-demo="stability-summary-citations"></p>
+      <article class="stability-writeup__selection" data-demo="stability-selection" hidden>
+        <h4>Single model-selected candidate</h4>
+        <p class="stability-writeup__selection-code" data-demo="stability-selection-code"></p>
+        <p data-demo="stability-selection-rationale"></p>
+        <p class="stability-writeup__citation" data-demo="stability-selection-citations"></p>
+      </article>
+      <div class="stability-writeup__comparisons" data-demo="stability-comparisons"></div>
+      <p class="stability-writeup__training-data" data-demo="stability-training-data"></p>
+      <ul class="stability-writeup__limitations" data-demo="stability-limitations"></ul>
+      <p class="stability-writeup__notice">
+        This is a preliminary model selection from folded candidates, not a validated ranking,
+        stability score, comparison with training records, or measured result.
+      </p>
+    </section>
     <p class="variants__note tag"><span class="tag__kind">Prediction</span>ddG, confidence and displacement are model output, not measurements</p>
   </div>
 </section>

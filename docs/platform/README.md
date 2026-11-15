@@ -7,7 +7,7 @@ we do not, and what the run manifest records about it.
 | --- | --- | --- |
 | Tamarind Bio | `design` | [tamarind.md](tamarind.md) |
 | Boltz-2 | `fold` | [boltz2.md](boltz2.md) |
-| Adaption Labs | `score`, `explain` | [adaption.md](adaption.md) |
+| Adaption Labs | `explain` | [adaption.md](adaption.md) |
 
 Rules that apply to all of them.
 

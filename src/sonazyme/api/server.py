@@ -24,6 +24,7 @@ STATIC_FILES = {
     "lib/api.mjs": JS,
     "lib/data.mjs": JS,
     "lib/demo.mjs": JS,
+    "lib/structures.mjs": JS,
     "lib/viewer.mjs": JS,
     "lib/protein.mjs": JS,
     "lib/pipe.mjs": JS,
@@ -32,6 +33,7 @@ STATIC_FILES = {
     "lib/scroll.mjs": JS,
     "lib/tokens.mjs": JS,
     "vendor/three.module.js": JS,
+    "vendor/3Dmol-min.js": JS,
     "data/enzyme.json": "application/json; charset=utf-8",
     "enzyme.png": "image/png",
     "fonts/instrument-serif-400.woff2": "font/woff2",
@@ -39,6 +41,13 @@ STATIC_FILES = {
     "fonts/geist-500.woff2": "font/woff2",
     "fonts/geist-mono-400.woff2": "font/woff2",
 }
+LOCAL_STRUCTURE_FORMATS = {
+    ".cif": "cif",
+    ".ent": "pdb",
+    ".mmcif": "cif",
+    ".pdb": "pdb",
+}
+
 SECURITY_HEADERS = {
     "Cache-Control": "no-store",
     "X-Content-Type-Options": "nosniff",
@@ -62,6 +71,18 @@ class Response:
     filename: str | None = None
 
 
+@dataclass(frozen=True)
+class LocalStructure:
+    """Describe one allowlisted structure file from the local model folder."""
+
+    identity: str
+    group: str
+    name: str
+    format: str
+    path: Path
+    size_bytes: int
+
+
 def _json(value: object, status: int = 200, filename: str | None = None) -> Response:
     return Response(status, (json.dumps(value, allow_nan=False) + "\n").encode(), filename=filename)
 
@@ -69,10 +90,80 @@ def _json(value: object, status: int = 200, filename: str | None = None) -> Resp
 class Application:
     """Expose saved files through a small, explicit set of read-only routes."""
 
-    def __init__(self, runs_directory: Path, web_directory: Path | None = None):
-        """Select data and static roots, with no implicit access to repository files."""
+    def __init__(
+        self,
+        runs_directory: Path,
+        web_directory: Path | None = None,
+        *,
+        structure_directory: Path | None = None,
+    ):
+        """Select the run, web and local structure roots."""
         self.runs_directory = runs_directory.resolve()
         self.web_directory = web_directory.resolve() if web_directory is not None else None
+        self.structure_directory = (
+            structure_directory.resolve() if structure_directory is not None else None
+        )
+
+    def _local_structures(self) -> list[LocalStructure]:
+        root = self.structure_directory
+        if root is None or not root.is_dir():
+            raise FileNotFoundError("The configured local structure directory is unavailable")
+
+        structures = []
+        for path in root.rglob("*"):
+            if path.is_symlink() or not path.is_file():
+                continue
+            structure_format = LOCAL_STRUCTURE_FORMATS.get(path.suffix.lower())
+            if structure_format is None:
+                continue
+            resolved = path.resolve()
+            if not resolved.is_relative_to(root):
+                continue
+            relative = path.relative_to(root)
+            group = (
+                "Root models"
+                if len(relative.parts) == 1 or relative.parts[0] == "predictions"
+                else relative.parts[0]
+            )
+            name = (
+                Path(*relative.parts[1:]).as_posix()
+                if group != "Root models" and len(relative.parts) > 1
+                else relative.as_posix()
+            )
+            structures.append(
+                LocalStructure(
+                    identity=hashlib.sha256(relative.as_posix().encode("utf-8")).hexdigest(),
+                    group=group,
+                    name=name,
+                    format=structure_format,
+                    path=resolved,
+                    size_bytes=resolved.stat().st_size,
+                )
+            )
+        return sorted(
+            structures,
+            key=lambda item: (
+                item.group != "Root models",
+                item.group.casefold(),
+                item.name.casefold(),
+            ),
+        )
+
+    def _local_structure_groups(self) -> list[dict[str, object]]:
+        groups: dict[str, list[dict[str, object]]] = {}
+        for structure in self._local_structures():
+            groups.setdefault(structure.group, []).append(
+                {
+                    "id": structure.identity,
+                    "name": structure.name,
+                    "format": structure.format,
+                    "size_bytes": structure.size_bytes,
+                }
+            )
+        return [
+            {"name": name, "structures": structures}
+            for name, structures in groups.items()
+        ]
 
     def _directory(self, key: str) -> Path:
         if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", key) or key in {".", ".."}:
@@ -119,6 +210,36 @@ class Application:
         try:
             if path == "/api/health":
                 return _json({"status": "ok", "service": "sonazyme.api", "version": "1"})
+            if path == "/local-structures.json":
+                try:
+                    return _json({"groups": self._local_structure_groups()})
+                except (FileNotFoundError, OSError):
+                    return _json(
+                        {"error": "The configured local structure directory is unavailable"},
+                        503,
+                    )
+            if len(parts) == 2 and parts[0] == "local-structures":
+                identity = parts[1]
+                if not re.fullmatch(r"[0-9a-f]{64}", identity):
+                    return _json({"error": "Unknown local structure"}, 404)
+                try:
+                    structure = next(
+                        (
+                            item
+                            for item in self._local_structures()
+                            if item.identity == identity
+                        ),
+                        None,
+                    )
+                    if structure is None:
+                        return _json({"error": "Unknown local structure"}, 404)
+                    return Response(
+                        200,
+                        structure.path.read_bytes(),
+                        "text/plain; charset=utf-8",
+                    )
+                except (FileNotFoundError, OSError):
+                    return _json({"error": "The selected local structure is unavailable"}, 503)
             if path == "/" and self.web_directory is None:
                 return _json(
                     {

@@ -15,6 +15,7 @@ authors = [{ name = "Nabil Shah" }]
 dependencies = []
 
 [project.optional-dependencies]
+api = ["adaption>=0.16.0"]
 dev = ["pytest>=8", "ruff>=0.6"]
 
 [tool.hatch.build.targets.wheel]

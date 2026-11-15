@@ -30,6 +30,7 @@ validation/data/external/
 # Secrets
 .env
 .env.*
+/scripts/test.env
 
 # Editors and OS
 .DS_Store

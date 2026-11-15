@@ -114,7 +114,8 @@ film, or to a marine hull or a spacecraft water loop, is a new file in
 | --- | --- |
 | Variant design and optimisation | Tamarind Bio |
 | Structure and interaction prediction | Boltz-2 |
-| Stability scoring and the refinement loop | Adaption Labs |
+| Stability scoring and the refinement loop | Not implemented |
+| Preliminary candidate selection from folded run evidence | Adaption Labs |
 | Explaining a candidate from run artefacts | the Sonazyme scientist agent |
 
 Integration notes, including what each tool is trusted for and what it is not,
