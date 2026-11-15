@@ -10,10 +10,7 @@ from pathlib import Path
 from sonazyme.api.server import Application, make_server
 from sonazyme.api.snapshots import export_snapshot, read_snapshot, restore_snapshot
 
-DEFAULT_STRUCTURE_DIRECTORY = Path(
-    r"C:\Users\neilg\OneDrive\Documents\Undergraduate Study in DesEng @ Imperial"
-    r"\Hackathons\Imperial AI Hackathon\3D models"
-)
+DEFAULT_STRUCTURE_DIRECTORY = Path(__file__).resolve().parents[3] / "assets" / "structures"
 
 
 def main(argv: list[str] | None = None) -> None:

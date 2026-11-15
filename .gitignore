@@ -26,6 +26,8 @@ validation/data/external/
 *.npz
 *.ckpt
 *.pt
+!assets/structures/
+!assets/structures/**/*.pdb
 
 # Secrets
 .env
