@@ -2,229 +2,124 @@
 
 # Sonazyme
 
-**Sonar for the slime. AI-designed enzymes that still fold in the pipe.**
-
-[![Licence: Apache 2.0](https://img.shields.io/badge/licence-Apache_2.0-3b82f6.svg)](LICENSE)
-&nbsp;[![CI](https://github.com/Nabzx/sonazyme/actions/workflows/ci.yml/badge.svg)](https://github.com/Nabzx/sonazyme/actions/workflows/ci.yml)
-&nbsp;![Status: scaffold](https://img.shields.io/badge/status-scaffold-f59e0b.svg)
-&nbsp;![Wet lab: none](https://img.shields.io/badge/wet_lab-none-6b7280.svg)
-
-</div>
-
-<p align="center">
-  <img src="assets/hero.svg" alt="A data-centre cooling pipe with a biofilm layer on the inner wall, above the Sonazyme pipeline: sense, chassis, design, fold, score, rank, explain" width="900" />
-</p>
-
 **We use sonar to detect biofilm build-up in cooling pipes, then release
 enzymes designed to break it down.**
 
-Data centres pull heat out of GPUs with water. Bacteria live in that water and
-glue themselves to the inside of the pipe in a layer called a biofilm. The
-layer insulates the metal, narrows the channel and feeds corrosion, so
-operators dose the loop with biocide. The biocide kills the cells on the
-surface and leaves the glue, and the film grows back.
+[![Licence: Apache 2.0](https://img.shields.io/badge/licence-Apache_2.0-0284c7.svg)](LICENSE)
+&nbsp;[![CI](https://github.com/Nabzx/sonazyme/actions/workflows/ci.yml/badge.svg)](https://github.com/Nabzx/sonazyme/actions/workflows/ci.yml)
+&nbsp;![Status: demo](https://img.shields.io/badge/status-demo-0d9488.svg)
+&nbsp;![Wet lab: none](https://img.shields.io/badge/wet_lab-none-94a3b8.svg)
 
-Sonazyme designs enzymes that cut the glue instead, and that are redesigned to
-hold their shape in a loop running hot and alkaline. It is a design and
-triage tool for industrial biotech partners, not a product you pour into a
-pipe. Nothing here has been tested in a wet lab.
+</div>
 
-> Think of Sonazyme like a doctor using an ultrasound scan (acoustic waves) to
-> spot a blockage inside a patient, and then prescribing a custom medicine
-> (an AI-designed enzyme, structure predicted with Boltz-2) to dissolve it.
+<p align="center"><img src="assets/shots/hero.jpg" alt="The Sonazyme front page: a predicted NucB structure beside the headline" width="900" /></p>
 
-## Why off-the-shelf enzymes do not work
+AI data centres are cooled with water. Bacteria live in that water, stick to
+the pipe walls and build a slimy layer called a biofilm. It insulates the
+metal, chokes the flow and throttles the chips. Operators dose the loop with
+biocide, which kills the cells on the surface and leaves the glue they built,
+so the film grows straight back.
 
-An enzyme is a protein, and a protein is a folded chain. The fold is the tool.
-Heat and pH shake the chain until the fold is lost, which is denaturing, and a
-denatured enzyme does nothing. Cleaning enzymes sold today are tuned for a
-washing machine or a food plant, not for the conditions inside a cooling loop,
-so the obvious candidates are the wrong shape within minutes of being dosed.
+Enzymes dissolve that glue properly. Ordinary ones fall apart in warm water
+within minutes. Sonazyme designs ones that do not.
 
-Two routes out of that. **Rigidify**: keep the same job, change the parts of
-the chain that give way first, so the fold survives the loop. **Pre-compensate**:
-predict how the fold shifts under load and aim off, so it lands correct once it
-is hot. Sonazyme takes the rigidify route, for the reasons in
-[ADR-0003](docs/adr/0003-rigidify-not-pre-compensate.md). Pre-compensation is
-written down as a research direction, not a claim.
+> Like an ultrasound finding a blockage, then a medicine made to dissolve it.
 
-## What it does
+## The pipe is a sealed box
 
-| Stage | What happens | What it writes |
-| --- | --- | --- |
-| `sense` | name the bond that holds the target biofilm together, and later, read the loop to find where the film is | a target definition and a condition envelope |
-| `chassis` | pick parent enzymes that cut that bond | candidate sequences with their sources |
-| `design` | propose variants of each parent, via Tamarind Bio | a variant set with the mutations made |
-| `fold` | predict each variant's structure, via Boltz-2 | structures and confidence |
-| `score` | predict stability in the envelope, and check the active site survived | a stability estimate and an integrity flag |
-| `rank` | trade stability against activity and confidence | an ordered shortlist with the trade-offs shown |
-| `explain` | answer questions about the shortlist from the run's own artefacts | a cited answer, never a canned one |
+<p align="center"><img src="assets/shots/inside-the-pipe.jpg" alt="Inside a cooling pipe: bacteria and ochre glue on the wall" width="900" /></p>
 
-Every stage appends to one run manifest: inputs, model and version, score,
-artefact path. The dashboard and the agent read the manifest, so anything
-either of them says can be traced back to the run that produced it
-([ADR-0004](docs/adr/0004-provenance-on-every-number.md)).
+You cannot cut open a running loop, so we ping it. The echo at a boundary
+depends on the two materials either side, and biofilm is mostly water, so the
+signal barely moves. Our forward model says so plainly: hard scale is easy to
+see, a soft film comes back with a wide interval, and anything under the
+resolution floor is reported as undetermined rather than as a number.
 
-## Sensing the loop
+## Designing an enzyme that survives the pipe
 
-A cooling loop is a sealed box. Nobody can see inside it while it runs, so
-treatment is dosed on a schedule rather than on evidence, and the first sign
-of a problem is usually a performance number drifting.
+<p align="center"><img src="assets/shots/enzyme-film.gif" alt="The enzyme film: the glue strand, the enzyme arriving, the chain building" width="640" /></p>
 
-Ultrasonic methods already do this in industrial water, and the working ones
-measure a prepared surface rather than an arbitrary run of pipe: a membrane
-cell, a side-stream coupon, a heated target. A layer on that surface changes
-the echo and the time of flight, and one commercial analyser claims to
-separate soft biological deposits from hard scale on that basis. Pointed at a
-loop, a sensor like that plus inference across the circuit says where to dose,
-which section to sample, and whether a treatment did anything.
+The film on the site runs the whole process. Find what holds the biofilm
+together, pick the enzyme that cuts it, predict its shape with **Boltz-2**,
+redesign it with **HyperMPNN on Tamarind Bio**, score every change, and keep
+the one that leaves the cutting site intact.
 
-The sourced version of this, with what is published and what is only claimed,
-is in [docs/research/acoustic-feasibility.md](docs/research/acoustic-feasibility.md).
+The result that matters came from the scoring. A ranking model's fourth-best
+mutation changed **Asn117**, one of the five catalytic residues, whose
+equivalent mutant abolished activity in the literature. A stable but dead
+enzyme at the top of a shortlist is the worst failure this project can have,
+because it looks like a success. The active site is now excluded in the design
+request itself, and 48 proposals were rejected on that rule.
 
-That is the sonar half of the name, and it is the direction the project is
-committed to. What exists today is a physics forward model producing simulated
-readings, labelled simulated wherever they appear (ADR-0013). No loop has been
-pinged. The hard
-question is whether the signal can tell a soft water-rich biofilm from hard
-scale or corrosion product, and that question is open:
-[#68](https://github.com/Nabzx/sonazyme/issues/68). The scope is fixed by an
-ADR before any of it is claimed
-([#57](https://github.com/Nabzx/sonazyme/issues/57)), and until a retrodiction
-case passes, anything shown is labelled as a demonstration of the method
-rather than as a measurement.
+<p align="center"><img src="assets/shots/folded-redesigns.jpg" alt="Thirty-one folded redesigns in the structure viewer" width="900" /></p>
 
-## Targets are data, not code
+Every surviving design was folded again. Thirty-one predictions are browsable
+on the page, coloured by the confidence the folder itself reported.
 
-The biofilm in a cooling loop is not one thing. Composition changes with the
-water, the metal, the temperature and the biocide history, so the target is a
-file, not a hard-coded assumption
-([ADR-0002](docs/adr/0002-targets-are-data.md)). A target definition names the
-organism or community, the structural components that hold the film together,
-the bond each component offers, and the envelope the enzyme must work in.
+## Knowing when to treat
 
-The default target is a *Pseudomonas*-style loop film, with a
-sulfate-reducing community as the corrosion case. Swapping to a different
-film, or to a marine hull or a spacecraft water loop, is a new file in
-`targets/`, not a new pipeline.
+<p align="center"><img src="assets/shots/loop-world-model.jpg" alt="The cooling loop drawn as a graph, with the learned policy dosing" width="900" /></p>
 
-## The tools
+The loop is a world model, and maintenance is the thing we learn in it.
+Tabular Q-learning finds when and where to dose from what a sensor would
+actually report. Scored on eight loops it never trained on, against doing
+nothing and against a fixed schedule:
 
-| Job | Tool |
-| --- | --- |
-| Variant design and optimisation | Tamarind Bio |
-| Structure and interaction prediction | Boltz-2 |
-| Stability scoring and the refinement loop | Adaption Labs |
-| Explaining a candidate from run artefacts | the Sonazyme scientist agent |
-
-Integration notes, including what each tool is trusted for and what it is not,
-are in [docs/platform/](docs/platform).
-
-## The dashboard
-
-Sonazyme Lab is a web app, specified in
-[docs/design/dashboard.md](docs/design/dashboard.md), built around five
-screens: the problem, the baseline enzyme and where it denatures, the live
-redesign with candidates arriving and scored, a question to the agent answered
-from real output, and the case for the approach. The app lives in
-[`web/`](web).
-
-## New to the biology
-
-[`docs/biology/`](docs/biology) explains every biological idea this repo
-depends on, at GCSE level, in order. Enzymes and active sites, why shape is
-everything, what denaturing is, what a biofilm is made of, which enzyme cuts
-which part of it, what a mutation does to stability, and how structure
-prediction fits in. Read it before the architecture if the word polysaccharide
-is doing a lot of work for you.
-
-## What this is not
-
-- Not a treatment. No dosing advice, no claim of efficacy in a real loop.
-- Not a wet-lab result. Every number here comes from a model.
-- Not a biocide replacement until something has been measured. The honest
-  claim is a shortlist worth testing, nothing further.
-- Not work on anything that makes an organism more harmful. See
-  [SECURITY.md](SECURITY.md).
-
-## The environmental case
-
-Loop treatment today is chemical: oxidising biocides, non-oxidising biocides,
-dispersants and the blowdown that carries them out of the building. An
-enzyme that cuts the glue is dosed in smaller amounts, works on the film
-rather than on everything in the water, and breaks down into sugars and amino
-acids rather than persisting in discharge. Cleaner heat transfer also means
-less pump work and fewer tube replacements. Those are the reasons to want
-this. None of them are quantified yet, and the repo will not carry a saving
-figure until a measurement exists to back it. The method we would use to
-quantify it is in
-[docs/research/environmental-case.md](docs/research/environmental-case.md).
-
-## Repo layout
-
-```
-src/sonazyme/
-  core/      the run manifest, the condition envelope, the stage contract
-  sense/     target definitions and what holds a film together
-  chassis/   parent enzymes and where they came from
-  design/    variant generation, the Tamarind Bio client
-  fold/      structure prediction, the Boltz-2 client
-  score/     stability in the envelope, active-site integrity
-  rank/      multi-objective ranking and the trade-off front
-  explain/   the scientist agent, answering from run artefacts
-  runs/      run manifests and the artefact store
-  api/       the service the dashboard reads
-targets/     target definitions, one file each
-web/         Sonazyme Lab, the dashboard
-validation/  retrodiction cases: model prediction against published measurement
-docs/
-  biology/      every biological idea, at GCSE level
-  adr/          decisions, one per file
-  architecture/ how the stages fit together
-  platform/     Tamarind Bio, Boltz-2, Adaption Labs integration notes
-  design/       the dashboard and the visual language
-  research/      notes that feed decisions
-  validation/   what counts as a passing case
-  agents/       how coding agents work in this repo
-```
-
-## Getting started
+| | hours over ceiling | doses | peak | mean film |
+| --- | --- | --- | --- | --- |
+| untreated | 201 | 0 | 96.0 °C | 0.71 |
+| fixed schedule | 0 | 20 | 76.2 °C | 0.53 |
+| **learned** | **0** | 58 | **72.8 °C** | **0.21** |
 
 ```bash
-git clone https://github.com/Nabzx/sonazyme && cd sonazyme
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e ".[dev]"
-pytest
+python scripts/loop_policy.py     # trains and scores in about a second
 ```
 
-That installs the skeleton and runs its tests. Any stage that is not built yet
-raises `NotBuiltError` naming the milestone that will build it.
+The graph on the page is not a drawing of this. It loads the learned table and
+runs the same dynamics in the browser.
 
-The shared [manifest writer and artefact store](docs/architecture/manifest-v1.md)
-are implemented. The initial
-[target research](docs/research/demo-target.md) records a recommendation and
-the missing loop data, not an experimental result.
+## Run it
 
-The `sense` stage now loads evidence-bearing TOML targets. The
-[research target](targets/psl-literature.toml) preserves unknown envelope values;
-it is not ready for scoring. The [stage runner](docs/architecture/runner.md)
-records attempts and resumes from matching saved successes without model calls.
-The [chassis registry](targets/chassis/README.md) now records a sourced PslG
-construct and its residue mapping. Its complete binding-site exclusion remains
-unresolved, so design is blocked. The [Boltz wrapper and integrity helper](docs/architecture/folding-and-integrity.md)
-are implemented and tested with software fixtures. No real structure prediction
-or biological geometry comparison has run. Design, stability scoring, ranking
-and explanation remain unbuilt here.
+```bash
+pip install -e ".[dev]"
+python -m sonazyme.api --runs-dir runs --web-dir web
+```
 
-## How the work is organised
+Then open `http://127.0.0.1:8000`. It runs with the network off.
 
-- [ROADMAP.md](ROADMAP.md): the milestones, in order.
-- [CONTEXT.md](CONTEXT.md): the glossary. One word per concept.
-- [docs/adr/](docs/adr): why things are the way they are.
-- [CONTRIBUTING.md](CONTRIBUTING.md): issues first, ADR before code.
-- [AGENTS.md](AGENTS.md): how an agent works here, and the invariants.
+## Honesty
 
-## Licence
+Every number on the page carries the model that produced it, and anything
+drawn rather than computed is labelled. The enzyme's shape is a real Boltz-2
+prediction, the cutting site comes from the literature, the engineered region
+is real design output. The sonar readings, the heat and the workflow are
+illustrations and say so.
+
+**Nothing here has been tested in a wet lab.** Predictions are not
+measurements.
+
+## The stack
+
+| | |
+| --- | --- |
+| Structure prediction | Boltz-2 |
+| Design and ranking | HyperMPNN, MutRank and ThermoMPNN on Tamarind Bio |
+| Candidate scoring | a model fine-tuned with Adaption |
+| Operator briefings | Synthesia |
+| Dosing policy | tabular Q-learning over our own world model |
+| Front end | plain ES modules and three.js, no build step |
+
+## Where it goes
+
+Anywhere water meets metal: shipping, water networks and spacecraft life
+support, where nobody can be sent to scrub a pipe. The platform stays the
+same. Only the target file changes.
+
+## More
+
+- [docs/biology/](docs/biology): every biological idea, at GCSE level
+- [docs/adr/](docs/adr): why the project is built the way it is
+- [docs/research/](docs/research): what we checked, including what did not work
+- [CONTEXT.md](CONTEXT.md), [ROADMAP.md](ROADMAP.md), [CONTRIBUTING.md](CONTRIBUTING.md)
 
 Apache 2.0. See [LICENSE](LICENSE).
