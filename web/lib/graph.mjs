@@ -77,7 +77,9 @@ export function mountGraph(canvas, { reduced = false, policy = null } = {}) {
     context.clearRect(0, 0, width, height);
     const edge = colour("--border");
     const flow = colour("--cobalt-hydro");
-    const ochre = colour("--biofilm-ochre");
+    // The panel runs in the page's blue. Film reads as weight and depth of
+    // colour rather than as a hue of its own.
+    const deep = colour("--ink");
     const teal = colour("--teal-protein");
     const ink = colour("--ink-faint");
 
@@ -125,9 +127,14 @@ export function mountGraph(canvas, { reduced = false, policy = null } = {}) {
         const local = clamp(level * (0.72 + 0.4 * Math.sin(col * 1.7 + row)));
         const radius = lerp(3.1, 8.4, local);
         const hit = flash[row] * (1 - Math.min(1, Math.abs(col - 1) / 4));
+        const shade = {
+          r: lerp(flow.r, deep.r, local * 0.55),
+          g: lerp(flow.g, deep.g, local * 0.55),
+          b: lerp(flow.b, deep.b, local * 0.3),
+        };
         context.fillStyle = hit > 0.02
           ? `rgba(${teal.r * 255 | 0}, ${teal.g * 255 | 0}, ${teal.b * 255 | 0}, ${0.35 + hit * 0.6})`
-          : `rgba(${ochre.r * 255 | 0}, ${ochre.g * 255 | 0}, ${ochre.b * 255 | 0}, ${0.12 + local * 0.78})`;
+          : `rgba(${shade.r * 255 | 0}, ${shade.g * 255 | 0}, ${shade.b * 255 | 0}, ${0.2 + local * 0.72})`;
         context.beginPath();
         context.arc(x, y, radius, 0, Math.PI * 2);
         context.fill();
