@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="tokens.css" />
 <link rel="stylesheet" href="styles.css" />
 <script type="module" src="app.mjs"></script>
+<script type="module" src="lib/scientist-video.mjs"></script>
 </head>
 <body>
 
@@ -149,10 +150,8 @@
 
       <figure class="talk reveal">
         <div class="talk__frame glass">
-          <!-- VIDEO SEAM. Drop the talking-head mp4 in here, as the first child:
-               <video class="talk__video" src="media/scientist.mp4" controls preload="metadata" playsinline></video>
-               Register the file in STATIC_FILES in src/sonazyme/api/server.py.
-               The placeholder below hides itself as soon as a video element is present. -->
+          <!-- The recorder supplies scientist.mp4, .vtt and .json together.
+               Keep this placeholder until a real clip loads successfully. -->
           <div class="talk__placeholder">
             <span class="talk__play" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" /></svg>
@@ -161,8 +160,8 @@
           </div>
         </div>
         <figcaption class="talk__caption">
-          <p class="eyebrow">The scientist</p>
-          <p>The scientist explains the run: which design was chosen, and why.</p>
+          <p class="eyebrow">Hana · AI scientist presenter</p>
+          <p>An authored explanation of the biology and enzyme design process. No Sonazyme wet-lab result.</p>
         </figcaption>
       </figure>
     </div>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Hana recording session</title></head>
+<body><video id="preview" autoplay muted playsinline></video>
+<script src="/livekit-client.umd.js"></script>
+<script>
+// Private, temporary recording page. Tokens arrive in memory from Playwright;
+// no key, token or authenticated URL is saved to a file or browser storage.
+let room, avatarVideo, recorder, audioContext, destination, pending = Promise.resolve();
+let chunks = 0;
+const audioSources = [];
+window.recordingError = null;
+window.avatarAudioReady = false;
+window.connectAvatar = async function ({ url, token, identity }) {
+  audioContext = new AudioContext({ sampleRate: 48000 });
+  await audioContext.resume();
+  destination = audioContext.createMediaStreamDestination();
+  room = new LivekitClient.Room({ adaptiveStream: false, dynacast: false });
+  room.on(LivekitClient.RoomEvent.TrackSubscribed, (track, publication, participant) => {
+    if (participant.identity !== identity) return;
+    if (track.kind === LivekitClient.Track.Kind.Video) {
+      avatarVideo = track.mediaStreamTrack;
+      const preview = document.getElementById('preview');
+      preview.srcObject = new MediaStream([avatarVideo]);
+      preview.play().catch(() => { window.recordingError = 'Avatar video playback failed'; });
+    } else if (track.kind === LivekitClient.Track.Kind.Audio) {
+      // Remote WebRTC audio needs an active media-element playback sink in Chrome.
+      // Route that element into the recording destination rather than speakers.
+      const element = document.createElement('audio');
+      element.autoplay = true;
+      element.srcObject = new MediaStream([track.mediaStreamTrack]);
+      const source = audioContext.createMediaElementSource(element);
+      source.connect(destination);
+      audioSources.push({ element, source });
+      document.body.append(element);
+      element.play().then(() => { window.avatarAudioReady = true; }).catch(() => {
+        window.recordingError = 'Avatar audio playback failed';
+      });
+    }
+  });
+  room.on(LivekitClient.RoomEvent.Disconnected, () => {
+    if (recorder?.state === 'recording') window.recordingError = 'Avatar room disconnected';
+  });
+  await room.connect(url, token, { autoSubscribe: true });
+};
+window.startRecording = async function () {
+  const preview = document.getElementById('preview');
+  if (!avatarVideo || preview.videoWidth === 0) throw new Error('Avatar is not ready');
+  const types = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'];
+  const mimeType = types.find(type => MediaRecorder.isTypeSupported(type));
+  if (!mimeType) throw new Error('No supported recording format');
+  const stream = new MediaStream([avatarVideo, ...destination.stream.getAudioTracks()]);
+  recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 4000000, audioBitsPerSecond: 128000 });
+  recorder.ondataavailable = event => {
+    if (!event.data.size) return;
+    pending = pending.then(async () => {
+      const encoded = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = () => {
+          const marker = ';base64,';
+          const start = reader.result.indexOf(marker);
+          if (start < 0) return reject(new Error('Unexpected recording data format'));
+          resolve(reader.result.slice(start + marker.length));
+        };
+        reader.readAsDataURL(event.data);
+      });
+      await window.writeRecordingChunk(encoded);
+      chunks += 1;
+    });
+  };
+  recorder.onerror = () => { window.recordingError = 'Browser recording failed'; };
+  recorder.start(1000);
+  window.recordingStarted = performance.now();
+  return mimeType;
+};
+window.recordingTime = () => (performance.now() - window.recordingStarted) / 1000;
+window.stopRecording = async function () {
+  await new Promise(resolve => { recorder.onstop = resolve; recorder.stop(); });
+  await pending;
+  if (window.recordingError || !chunks) throw new Error(window.recordingError || 'No video was captured');
+  return { chunks, elapsed: window.recordingTime() };
+};
+window.closeRecordingRoom = async function () {
+  if (recorder?.state === 'recording') await window.stopRecording();
+  await room?.disconnect();
+  await audioContext?.close();
+};
+</script></body></html>
