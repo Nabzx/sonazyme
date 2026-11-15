@@ -170,6 +170,13 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--chain")
     parser.add_argument("--active-site", type=int, nargs="*", default=[])
     parser.add_argument(
+        "--changed",
+        type=int,
+        nargs="*",
+        default=[],
+        help="positions this structure carries a substitution at, for the record",
+    )
+    parser.add_argument(
         "--metric",
         action="append",
         default=[],
@@ -186,6 +193,7 @@ def main(argv: list[str] | None = None) -> None:
             source_note=args.source_note,
             chain=args.chain,
             active_site=args.active_site,
+            changed=args.changed,
         )
         metrics = []
         for raw in args.metric:
