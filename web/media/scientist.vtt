@@ -1,0 +1,40 @@
+WEBVTT
+
+00:00:00.504 --> 00:00:06.378
+Hi, I'm an AI scientist. This simulation shows how we design enzymes
+
+00:00:06.378 --> 00:00:07.846
+to target biofilm.
+
+00:00:08.150 --> 00:00:13.191
+Biofilm is a layer of bacteria held together by a sticky mesh.
+
+00:00:13.191 --> 00:00:16.972
+Some of that mesh is DNA outside the cells.
+
+00:00:17.274 --> 00:00:22.966
+Watch the enzyme fold. It is a chain of amino acids, and
+
+00:00:22.966 --> 00:00:28.658
+its shape creates an active site: tiny molecular scissors. Our starting enzyme,
+
+00:00:28.658 --> 00:00:30.080
+NucB, cuts DNA.
+
+00:00:30.384 --> 00:00:37.037
+Boltz predicted its shape. Through Tamarind Bio, MutRank explored changes and Hyper
+
+00:00:37.037 --> 00:00:43.690
+M P N N generated new sequences while we kept known cutting
+
+00:00:43.690 --> 00:00:44.799
+positions unchanged.
+
+00:00:45.102 --> 00:00:49.590
+Finally, the heat animation illustrates how an enzyme can lose its shape.
+
+00:00:49.590 --> 00:00:54.077
+Our goal is to redesign the surrounding chain so the scissors keep
+
+00:00:54.077 --> 00:00:56.320
+their shape in a cooling loop.

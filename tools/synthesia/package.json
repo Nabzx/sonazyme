@@ -1,0 +1,7 @@
+{
+  "name": "sonazyme-hana-recorder",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Optional recording tool only; not part of the website runtime",
+  "dependencies": { "livekit-client": "2.24.1" }
+}

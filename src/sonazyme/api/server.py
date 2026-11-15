@@ -30,6 +30,10 @@ STATIC_FILES = {
     "lib/overhead.mjs": JS,
     "lib/scroll.mjs": JS,
     "lib/tokens.mjs": JS,
+    "lib/scientist-video.mjs": JS,
+    "media/scientist.mp4": "video/mp4",
+    "media/scientist.vtt": "text/vtt; charset=utf-8",
+    "media/scientist.json": "application/json; charset=utf-8",
     "vendor/three.module.js": JS,
     "data/enzyme.json": "application/json; charset=utf-8",
     "enzyme.png": "image/png",
@@ -220,7 +224,11 @@ def make_server(application: Application, port: int = 8000) -> ThreadingHTTPServ
                     "Content-Disposition", f'attachment; filename="{response.filename}"'
                 )
             self.end_headers()
-            self.wfile.write(response.body)
+            try:
+                self.wfile.write(response.body)
+            except (BrokenPipeError, ConnectionResetError):
+                # A media client may stop downloading after reading metadata.
+                pass
 
         def do_GET(self):
             """Reject non-local hosts and dispatch an allowlisted read route."""

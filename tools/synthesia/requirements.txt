@@ -1,0 +1,4 @@
+livekit-agents==1.8.12
+livekit-plugins-synthesia==1.8.12
+python-dotenv==1.2.4
+playwright==1.65.2
