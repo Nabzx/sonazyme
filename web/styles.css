@@ -226,7 +226,14 @@ canvas { display: block; }
 .section { position: relative; padding-block: clamp(5rem, 14vh, 10rem); }
 .section__head { display: grid; gap: var(--s4); margin-bottom: clamp(2rem, 6vh, 4rem); }
 .reveal { opacity: 0; transform: translateY(28px); transition: opacity var(--slow) var(--ease), transform var(--slow) var(--ease); }
-.reveal.is-in { opacity: 1; transform: none; }
+.reveal.is-in { opacity: 1; transform: none; animation: none; }
+/* A section is revealed by script as it scrolls in. If no script runs at all,
+   nothing would ever add .is-in and the page would read as blank, so reveal it
+   anyway after a moment. Opening index.html as a file does exactly this: the
+   browser refuses to load an ES module over file://, and the page stays empty.
+   Serve it instead, with python -m sonazyme.api --web-dir web. */
+.reveal { animation: reveal-fallback 400ms var(--ease) 2.5s both; }
+@keyframes reveal-fallback { to { opacity: 1; transform: none; } }
 
 /* Sonar bench */
 .sonar {
