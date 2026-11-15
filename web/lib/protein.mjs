@@ -78,8 +78,10 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
   const { n } = model;
   const random = seeded(7);
   const background = colour("--sterile-white");
-  const chain = colour("--chain");
-  const chainPale = colour("--card-surface").lerp(colour("--chain"), 0.35);
+  const chain = colour(mode === "hero" ? "--hero-chain" : "--chain");
+  const chainPale = mode === "hero"
+    ? colour("--hero-chain-pale")
+    : colour("--card-surface").lerp(colour("--chain"), 0.35);
   const teal = colour("--teal-protein");
   const cobalt = colour("--cobalt-hydro");
   const ochre = colour("--biofilm-ochre");
@@ -131,6 +133,9 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
   });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.frustumCulled = false;
+  const heroBounds = new THREE.Box3().setFromArray(model.fold);
+  const heroSphere = heroBounds.getBoundingSphere(new THREE.Sphere());
+  if (mode === "hero") mesh.position.copy(heroSphere.center).negate();
   spin.add(mesh);
 
   // Scratch vectors, reused every frame.
@@ -193,14 +198,39 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
   const tint = new THREE.Color();
   const turn = new THREE.Quaternion();
   const euler = new THREE.Euler();
+  const heroProjection = new THREE.Matrix4();
+  const heroProjectedPoint = new THREE.Vector3();
   let clock = 0;
 
+  function centreHeroOutline() {
+    // A centred 3D bounding box can still project off-centre when this
+    // asymmetric chain rotates. Centre its visible outline in screen space.
+    camera.clearViewOffset();
+    camera.updateMatrixWorld();
+    mesh.updateWorldMatrix(true, false);
+    heroProjection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse)
+      .multiply(mesh.matrixWorld);
+    let left = Infinity, right = -Infinity, bottom = Infinity, top = -Infinity;
+    for (let index = 0; index < tubePosition.length; index += 3) {
+      heroProjectedPoint.fromArray(tubePosition, index).applyMatrix4(heroProjection);
+      left = Math.min(left, heroProjectedPoint.x);
+      right = Math.max(right, heroProjectedPoint.x);
+      bottom = Math.min(bottom, heroProjectedPoint.y);
+      top = Math.max(top, heroProjectedPoint.y);
+    }
+    const width = canvas.clientWidth || 1;
+    const height = canvas.clientHeight || 1;
+    camera.setViewOffset(width, height, (left + right) * width / 4,
+      -(bottom + top) * height / 4, width, height);
+  }
+
   function place(w, h) {
-    const wide = w / h > 1.15;
     if (mode === "hero") {
-      camera.position.z = wide ? 150 : 235;
-      const halfH = Math.tan((camera.fov * Math.PI) / 360) * camera.position.z;
-      rig.position.set(wide ? halfH * (w / h) * 0.54 : 0, wide ? 2 : halfH * 0.4, 0);
+      // Keep the complete trace centred in its own hero column, including the
+      // long precursor tail, rather than positioning it against the viewport.
+      const halfFov = Math.atan(Math.tan(camera.fov * Math.PI / 360) * Math.min(1, w / h));
+      camera.position.z = (heroSphere.radius + 1.8) / Math.sin(halfFov) * 1.04;
+      rig.position.set(0, 0, 0);
       baseY = rig.position.y;
     } else {
       camera.position.z = w / h > 0.95 ? 146 : 172;
@@ -298,8 +328,8 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
     pointer.y = damp(pointer.y, pointer.ty, 3, step);
     if (mode === "hero") {
       drift.value = reduced ? drift.target : damp(drift.value, drift.target, 6, step);
-      rig.position.y = baseY + drift.value * 26;
-      rig.position.z = drift.value * -34;
+      rig.position.y = baseY + drift.value * 4;
+      rig.position.z = drift.value * -8;
     }
     if (mode === "hero") {
       euler.set(0.18 + pointer.y * 0.22, clock * 0.16 + pointer.x * 0.45, 0);
@@ -308,6 +338,7 @@ export function mountProtein(canvas, data, { mode = "hero", reduced = false } = 
       euler.set(Math.sin(clock * 0.23) * 0.07 + pointer.y * 0.18, Math.sin(clock * 0.31) * 0.26 + pointer.x * 0.3, 0);
       spin.quaternion.copy(turn.setFromEuler(euler)).multiply(rest);
     }
+    if (mode === "hero") centreHeroOutline();
     renderer.render(scene, camera);
   }
 

@@ -232,6 +232,41 @@ def test_events_end_with_error_instead_of_sending_corrupt_data(saved):
         next(stream)
 
 
+def test_video_media_probes_and_seeking_use_byte_ranges(saved, tmp_path):
+    root, _, _ = saved
+    web = tmp_path / "web"
+    (web / "media").mkdir(parents=True)
+    (web / "media/scientist.mp4").write_bytes(b"0123456789")
+    server = make_server(Application(root, web), port=0)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        cases = [
+            ("bytes=0-1", 206, b"01", "bytes 0-1/10"),
+            ("bytes=7-", 206, b"789", "bytes 7-9/10"),
+            ("bytes=-3", 206, b"789", "bytes 7-9/10"),
+            ("bytes=8-99", 206, b"89", "bytes 8-9/10"),
+            ("bytes=10-", 416, b"", "bytes */10"),
+            ("bytes=4-2", 416, b"", "bytes */10"),
+            ("bytes=-0", 416, b"", "bytes */10"),
+            ("bytes=0-1,4-5", 200, b"0123456789", None),
+        ]
+        for header, status, body, content_range in cases:
+            connection = HTTPConnection("127.0.0.1", server.server_port, timeout=5)
+            connection.request("GET", "/media/scientist.mp4", headers={"Range": header})
+            response = connection.getresponse()
+            assert response.status == status
+            assert response.getheader("Accept-Ranges") == "bytes"
+            assert response.getheader("Content-Range") == content_range
+            assert int(response.getheader("Content-Length")) == len(body)
+            assert response.read() == body
+            connection.close()
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=2)
+
+
 def test_http_transport_read_only_host_checks_and_sse(saved):
     _, store, app = saved
     store.save(finish(store.load()))

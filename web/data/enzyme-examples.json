@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "kind": "literature-enzyme-examples",
+  "visual_basis": "AI-generated visual concepts, not molecular structures",
+  "examples": [
+    {
+      "name": "NucB",
+      "family": "Extracellular DNA",
+      "colour": "--concept-blue",
+      "description": "Cuts DNA outside bacterial cells, one of the strands that helps hold a biofilm together.",
+      "source": {
+        "url": "https://doi.org/10.1371/journal.pone.0015668",
+        "title": "Dispersal of Biofilms by Secreted, Matrix Degrading, Bacterial DNase",
+        "evidence": "Primary research identifying extracellular NucB DNase and studying matrix-DNA degradation and biofilm dispersal. This is published evidence, not a Sonazyme result."
+      }
+    },
+    {
+      "name": "PslG",
+      "family": "Psl sugar matrix",
+      "colour": "--concept-green",
+      "description": "Breaks down Psl, a sticky sugar polymer that helps some bacterial biofilms attach and hold together.",
+      "source": {
+        "url": "https://doi.org/10.1038/cr.2015.129",
+        "title": "PslG, a self-produced glycosyl hydrolase, triggers biofilm disassembly by disrupting exopolysaccharide matrix",
+        "evidence": "Primary research reporting purified PslG-mediated Psl degradation and disassembly of Psl-containing biofilms. It does not establish activity against every biofilm or in a cooling loop."
+      }
+    },
+    {
+      "name": "PelA hydrolase",
+      "family": "Pel sugar matrix",
+      "colour": "--concept-amber",
+      "description": "The cutting domain of PelA targets Pel, another sugar polymer used to build bacterial biofilm matrix.",
+      "source": {
+        "url": "https://doi.org/10.1126/sciadv.1501632",
+        "title": "Exopolysaccharide biosynthetic glycoside hydrolases can be utilized to disrupt and prevent Pseudomonas aeruginosa biofilms",
+        "evidence": "Primary research on the isolated PelA hydrolase domain, PelAh, disrupting Pel-dependent biofilms. The example refers to that domain, not full-length PelA."
+      }
+    },
+    {
+      "name": "Dispersin B",
+      "family": "PNAG sugar matrix",
+      "colour": "--concept-violet",
+      "description": "Cuts PNAG, a sticky sugar chain used by several bacteria to build their protective matrix.",
+      "source": {
+        "url": "https://doi.org/10.1556/ABiol.59.2008.4.5",
+        "title": "Modeling and biochemical analysis of the activity of antibiofilm agent Dispersin B",
+        "evidence": "Primary biochemical research identifying Dispersin B activity against beta-1,6-linked N-acetylglucosamine polymers. This supports a PNAG-specific example, not a universal antibacterial claim."
+      }
+    },
+    {
+      "name": "Alg2A",
+      "family": "Alginate matrix",
+      "colour": "--concept-coral",
+      "description": "An alginate lyase that breaks down alginate, a gel-like sugar polymer found in some biofilm matrices.",
+      "source": {
+        "url": "https://doi.org/10.1038/s41598-020-66293-2",
+        "title": "Characterization of different alginate lyases for dissolving Pseudomonas aeruginosa biofilms",
+        "evidence": "Primary comparative research reporting biofilm degradation by the polyM/G-active alginate lyases Alg2A and A1-II-prime. Other alginate lyases in the same study were less effective; activity is not assumed for the whole family."
+      }
+    }
+  ]
+}

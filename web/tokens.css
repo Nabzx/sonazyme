@@ -55,6 +55,13 @@
 
   /* Neutral scene materials. No meaning attached. */
   --chain: #aebccd;          /* the protein chain */
+  --hero-chain: #287bdc;
+  --hero-chain-pale: #70b5ff;
+  --concept-blue: #3289e9;
+  --concept-green: #18a66b;
+  --concept-violet: #9655db;
+  --concept-amber: #eaa122;
+  --concept-coral: #eb6079;
   --steel: #9aa8ba;          /* pipework seen from above */
   --water: #eef3f8;          /* water in a cut-away pipe */
 
@@ -83,7 +90,7 @@
   --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
   --sans: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
-  --size-hero: clamp(2.05rem, 4.35vw, 4.4rem);
+  --size-hero: clamp(4.8rem, 10.5vw, 9.5rem);
   --size-display: clamp(2.2rem, 4.6vw, 4rem);
   --size-beat: clamp(4.5rem, 17vw, 15rem);
   --size-lead: clamp(1.02rem, 1.3vw, 1.2rem);

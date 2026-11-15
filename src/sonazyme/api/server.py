@@ -25,17 +25,20 @@ STATIC_FILES = {
     "lib/data.mjs": JS,
     "lib/viewer.mjs": JS,
     "lib/protein.mjs": JS,
+    "lib/film.mjs": JS,
+    "lib/concepts.mjs": JS,
     "lib/pipe.mjs": JS,
     "lib/sonar.mjs": JS,
     "lib/overhead.mjs": JS,
     "lib/scroll.mjs": JS,
     "lib/tokens.mjs": JS,
-    "lib/scientist-video.mjs": JS,
+    "media/scientist.jpg": "image/jpeg",
     "media/scientist.mp4": "video/mp4",
     "media/scientist.vtt": "text/vtt; charset=utf-8",
     "media/scientist.json": "application/json; charset=utf-8",
     "vendor/three.module.js": JS,
     "data/enzyme.json": "application/json; charset=utf-8",
+    "data/enzyme-examples.json": "application/json; charset=utf-8",
     "enzyme.png": "image/png",
     "fonts/instrument-serif-400.woff2": "font/woff2",
     "fonts/geist-400.woff2": "font/woff2",
@@ -212,9 +215,31 @@ def make_server(application: Application, port: int = 8000) -> ThreadingHTTPServ
 
     class Handler(BaseHTTPRequestHandler):
         def _respond(self, response: Response) -> None:
-            self.send_response(response.status)
+            status, body = response.status, response.body
+            media = status == 200 and response.content_type == "video/mp4"
+            content_range = None
+            if media:
+                size = len(body)
+                requested = re.fullmatch(
+                    r"bytes=(\d{0,20})-(\d{0,20})", self.headers.get("Range", "")
+                )
+                if requested and any(requested.groups()):
+                    first, last = requested.groups()
+                    start = int(first) if first else max(0, size - int(last))
+                    end = min(int(last), size - 1) if first and last else size - 1
+                    if start >= size or end < start:
+                        status, body = 416, b""
+                        content_range = f"bytes */{size}"
+                    else:
+                        status, body = 206, body[start : end + 1]
+                        content_range = f"bytes {start}-{end}/{size}"
+            self.send_response(status)
             self.send_header("Content-Type", response.content_type)
-            self.send_header("Content-Length", str(len(response.body)))
+            self.send_header("Content-Length", str(len(body)))
+            if media:
+                self.send_header("Accept-Ranges", "bytes")
+            if content_range is not None:
+                self.send_header("Content-Range", content_range)
             if response.status == 405:
                 self.send_header("Allow", "GET")
             for name, value in SECURITY_HEADERS.items():
@@ -225,7 +250,7 @@ def make_server(application: Application, port: int = 8000) -> ThreadingHTTPServ
                 )
             self.end_headers()
             try:
-                self.wfile.write(response.body)
+                self.wfile.write(body)
             except (BrokenPipeError, ConnectionResetError):
                 # A media client may stop downloading after reading metadata.
                 pass

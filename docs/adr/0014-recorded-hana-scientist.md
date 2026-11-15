@@ -40,6 +40,12 @@ are reviewed before speech synthesis. Do not create a broken video element
 or hide the placeholder until a real recorded video is available. Existing
 colours and the partner's simulation stay outside this change.
 
+Once the recording exists, embed it directly in the right-hand video slot
+with a still from the clip as its poster and native playback controls.
+Displaying the player must not depend on a detached video element loading
+metadata or a JavaScript request succeeding. Serve byte ranges for the MP4
+so browser media probes and seeking work locally.
+
 The website's existing notice carries the experimental status beside the
 video. At the user's request, the narration does not repeat that notice.
 It describes computational designs and predictions without implying physical
