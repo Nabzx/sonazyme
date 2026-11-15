@@ -2,7 +2,6 @@
 // Served under a strict CSP: nothing here writes an inline style. State goes
 // to the page through classes and data attributes only.
 import { notice } from "./lib/data.mjs";
-import { mountDemo } from "./lib/demo.mjs";
 import { mountOverhead } from "./lib/overhead.mjs";
 import { mountPipe } from "./lib/pipe.mjs";
 import { mountProtein } from "./lib/protein.mjs";
@@ -209,17 +208,33 @@ startEnzyme().catch((error) => {
   $(".hero")?.classList.add("no-webgl");
 });
 
-// The demo reads the saved run. If no run is present the page still works; the
-// gallery says so rather than showing an empty frame.
-mountDemo(document).catch((error) => {
-  console.warn(error);
+// The demo reads the saved run. It is loaded on its own, so that if its module
+// or its run is unavailable the animations above still work, and the gallery
+// says what is wrong instead of sitting empty.
+function galleryMessage(text) {
   const gallery = $('[data-demo="gallery"]');
-  if (gallery) {
-    gallery.replaceChildren();
-    const message = document.createElement("p");
-    message.className = "variants__loading";
-    message.textContent =
-      "No saved run could be read. Start the API with --runs-dir pointing at a run.";
-    gallery.append(message);
+  if (!gallery) return;
+  gallery.replaceChildren();
+  const message = document.createElement("p");
+  message.className = "variants__loading";
+  message.textContent = text;
+  gallery.append(message);
+}
+
+async function startDemo() {
+  let demo;
+  try {
+    demo = await import("./lib/demo.mjs");
+  } catch (error) {
+    console.warn(error);
+    galleryMessage("The demo code could not load. Restart the API server, then reload this page.");
+    return;
   }
-});
+  try {
+    await demo.mountDemo(document);
+  } catch (error) {
+    console.warn(error);
+    galleryMessage("No saved run could be read. Start the API with --runs-dir pointing at a run.");
+  }
+}
+startDemo();
