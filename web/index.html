@@ -247,20 +247,35 @@
     <header class="section__head reveal">
       <p class="eyebrow">The loop</p>
       <h2 class="display">Listen. Design. Dose. Listen again.</h2>
+      <p class="lead">The loop is a world model, and maintenance is the thing we learn in it.
+        Reinforcement learning works out when and where to treat, so the pipes stay clean
+        without the chips ever running hot.</p>
     </header>
-    <figure class="plan glass reveal" data-beat="0">
-      <canvas class="plan__canvas scene" data-scene="overhead" role="img"
-        aria-label="A cooling loop seen from above. A sonar pulse finds a fouled patch, an enzyme is designed and dosed, and the patch clears."></canvas>
-      <figcaption class="plan__foot">
-        <ol class="cycle">
-          <li>Ping</li>
-          <li>Detect</li>
-          <li>Design</li>
-          <li>Dose</li>
-          <li>Clear</li>
-        </ol>
-      </figcaption>
-    </figure>
+    <div class="loop-grid">
+      <figure class="plan glass reveal" data-beat="0">
+        <canvas class="plan__canvas scene" data-scene="overhead" role="img"
+          aria-label="A cooling loop seen from above. A sonar pulse finds a fouled patch, an enzyme is designed and dosed, and the patch clears."></canvas>
+        <figcaption class="plan__foot">
+          <ol class="cycle">
+            <li>Ping</li>
+            <li>Detect</li>
+            <li>Design</li>
+            <li>Dose</li>
+            <li>Clear</li>
+          </ol>
+        </figcaption>
+      </figure>
+      <figure class="network glass reveal">
+        <canvas class="network__canvas scene" data-scene="graph" role="img"
+          aria-label="The cooling loop as a graph: sections as rows of nodes, flow as edges, film shown as weight on each node, sensors ringed, and the section being dosed lit."></canvas>
+        <figcaption class="network__foot">
+          <p class="eyebrow">World model</p>
+          <p>Every section a node, every flow an edge. Film grows, the water
+            carries it, and a policy learned by reinforcement decides when and
+            where to dose, from what the sensors can see.</p>
+        </figcaption>
+      </figure>
+    </div>
   </div>
 </section>
 

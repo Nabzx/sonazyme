@@ -15,7 +15,7 @@ import json
 import time
 from pathlib import Path
 
-from sonazyme.loop.policy import act, train
+from sonazyme.loop.policy import LEVELS, SENSORS, act, train
 from sonazyme.loop.world import CEILING_C, Loop
 
 
@@ -44,6 +44,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--every", type=int, default=12, help="the fixed schedule's interval")
     parser.add_argument("--loops", type=int, default=8, help="how many loops to score on")
     parser.add_argument("--json", type=Path)
+    parser.add_argument(
+        "--export",
+        type=Path,
+        help="write the learned table where the page can read it",
+    )
     args = parser.parse_args(argv)
 
     started = time.perf_counter()
@@ -102,6 +107,29 @@ def main(argv: list[str] | None = None) -> int:
             f"{row['doses']:>3}    {row['peak_c']:>5}      {row['mean_film']:.3f}"
         )
     print(f"\nlearned {len(table)} states in {trained:.2f}s. Simulation only.")
+    if args.export:
+        args.export.parent.mkdir(parents=True, exist_ok=True)
+        args.export.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "kind": "loop-policy",
+                    "basis": "simulation",
+                    "note": report["note"],
+                    "sections": Loop().sections,
+                    "sensors": list(SENSORS),
+                    "ceiling_c": CEILING_C,
+                    "levels": LEVELS,
+                    "results": results,
+                    # "hot,worst,where" -> a value for each action, action 0 is
+                    # "do not dose" and action n+1 is "dose section n".
+                    "table": {",".join(map(str, state)): [round(v, 2) for v in values]
+                              for state, values in sorted(table.items())},
+                }
+            )
+            + "\n"
+        )
+        print(f"policy exported to {args.export}")
     if args.json:
         args.json.parent.mkdir(parents=True, exist_ok=True)
         args.json.write_text(json.dumps(report, indent=2) + "\n")

@@ -1,6 +1,7 @@
 // Sonazyme front page. Wires the scroll, the scenes and the small controls.
 // Served under a strict CSP: nothing here writes an inline style. State goes
 // to the page through classes and data attributes only.
+import { mountGraph } from "./lib/graph.mjs";
 import { mountLocalStructures } from "./lib/structures.mjs";
 import { mountFilm } from "./lib/film.mjs";
 import { mountOverhead } from "./lib/overhead.mjs";
@@ -92,6 +93,15 @@ register(sonarCanvas, (canvas) =>
 
 // The folded redesigns, read from the local model folder.
 mountLocalStructures().catch((error) => console.warn("Local structures unavailable", error));
+
+// The loop as a graph, running the learned policy.
+fetch("data/loop-policy.json")
+  .then((response) => (response.ok ? response.json() : null))
+  .then((policy) => {
+    register($('[data-scene="graph"]'), (canvas) => mountGraph(canvas, { reduced, policy }));
+    observe();
+  })
+  .catch((error) => console.warn("Loop policy unavailable", error));
 
 // The workflow.
 const plan = $(".plan");
