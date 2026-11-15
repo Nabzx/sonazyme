@@ -51,14 +51,20 @@ enzyme at the top of a shortlist is the worst failure this project can have,
 because it looks like a success. The active site is now excluded in the design
 request itself, and 48 proposals were rejected on that rule.
 
-<p align="center"><img src="assets/shots/folded-redesigns.jpg" alt="Thirty-one folded redesigns in the structure viewer" width="900" /></p>
+<p align="center"><img src="assets/shots/iterative-folds.jpg" alt="The structure viewer, with a dropdown of prediction folders and a folded NucB variant on screen" width="900" /></p>
 
-Every surviving design was folded again. Thirty-one predictions are browsable
-on the page, coloured by the confidence the folder itself reported.
+Every surviving design is folded again, round after round. Pick any variant
+from the list and look at it: thirty-one predictions from Boltz-2, ranked on
+Tamarind Bio and scored by our Adaption model, coloured by the confidence the
+folder itself reported.
 
 ## Knowing when to treat
 
-<p align="center"><img src="assets/shots/loop-world-model.jpg" alt="The cooling loop drawn as a graph, with the learned policy dosing" width="900" /></p>
+<p align="center"><img src="assets/shots/self-maintaining-loop.jpg" alt="The data centre layout beside the same loop drawn as a graph, with the policy dosing a section" width="900" /></p>
+
+A data centre that looks after itself. The layout is on the left, the same
+loop as a world model on the right: every section a node, every flow an edge,
+and the policy choosing when and where to dose.
 
 The loop is a world model, and maintenance is the thing we learn in it.
 Tabular Q-learning finds when and where to dose from what a sensor would
