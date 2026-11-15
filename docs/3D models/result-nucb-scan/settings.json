@@ -1,0 +1,12 @@
+{
+    "pdbFile": "neil.gadgil26@imperial.ac.uk/nucb_wildtype.pdb",
+    "chains": [
+        "A"
+    ],
+    "allChains": false,
+    "topK": 5000,
+    "_pdbFile_residueCount": 110,
+    "verify": false,
+    "submit_method": "api",
+    "type": "thermompnn"
+}

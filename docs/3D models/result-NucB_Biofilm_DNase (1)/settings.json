@@ -1,0 +1,34 @@
+{
+    "molecules": [
+        {
+            "type": "protein",
+            "sequence": "MIKKWAVHLLFSALVLLGLSGGAAYSPQHAEGAARYDDVLYFPASRYPETGAHISDAIKAGHADVCTIERSGADKRRQESLKGIPTKPGFDRDEWPMAMCEEGGKGASVRYVSSSDNRGAGSWVGNRLNGYADGTRILFIVQ",
+            "modifications": [],
+            "cifFiles": [],
+            "smiles": "",
+            "tabIndex": 0,
+            "chainId": "A"
+        }
+    ],
+    "bonds": [],
+    "numSamples": 5,
+    "numRecycles": 3,
+    "stepScale": 1.5,
+    "pocketRestraints": [],
+    "contactRestraints": [],
+    "outputType": "pdb",
+    "predictAffinity": false,
+    "binderChain": "",
+    "useBoltzServer": false,
+    "predictProteinAffinity": false,
+    "proteinBinderChains": [],
+    "version": "2.2.1",
+    "sequence": "MIKKWAVHLLFSALVLLGLSGGAAYSPQHAEGAARYDDVLYFPASRYPETGAHISDAIKAGHADVCTIERSGADKRRQESLKGIPTKPGFDRDEWPMAMCEEGGKGASVRYVSSSDNRGAGSWVGNRLNGYADGTRILFIVQ",
+    "msa": "done",
+    "monomer_msa": true,
+    "msaDatabase": "uniref",
+    "useMSA": true,
+    "runIpsae": true,
+    "seed": 285686420,
+    "type": "boltz"
+}

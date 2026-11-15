@@ -1,0 +1,11 @@
+sequences:
+    - protein:
+        id: A
+        sequence: AARYDDVLYFPASRYPETGAHISDAIKAGHAAVCTIERSGADKRRQESLKGIPTKPGFDRDEWPMAMCEEGGKGASVRYVSSSDNRGAGSWVGNRLNGYADGTRILFIVQ
+        msa: msaA.a3m
+    - dna:
+        id: B
+        sequence: ATGCATGCATGC
+    - dna:
+        id: C
+        sequence: GCATGCATGCAT
