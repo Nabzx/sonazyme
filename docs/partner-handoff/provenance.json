@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "kind": "partner-data-handoff",
+  "prepared_on": "2026-11-15",
+  "parent_chassis": "targets/chassis/nucb-precursor.json",
+  "files": [
+    {
+      "file": "mutrank_results.csv",
+      "sha256": "7d16113dd3a1c2b2b11fe90384777525f2691c5483480f1bce2f09caf2e96af1",
+      "size_bytes": 91024,
+      "rows": 2698,
+      "producer": {
+        "name": "mutrank",
+        "version": "tamarind-2026-11-14",
+        "kind": "model"
+      },
+      "source_note": "Tamarind Bio MutRank over every single point mutation in the Boltz 2.2.1 NucB structure, job sonazyme-nucb-mutrank.",
+      "copy": "Unmodified provider export"
+    },
+    {
+      "file": "mutrank_per_residue.csv",
+      "sha256": "baf38bf380a28f15c7a702735783d53aa66f9b4d97193b278cb50c986ac14368",
+      "size_bytes": 38963,
+      "rows": 142,
+      "producer": {
+        "name": "mutrank",
+        "version": "tamarind-2026-11-14",
+        "kind": "model"
+      },
+      "source_note": "Tamarind Bio MutRank over every single point mutation in the Boltz 2.2.1 NucB structure, job sonazyme-nucb-mutrank.",
+      "copy": "Unmodified provider export"
+    },
+    {
+      "file": "hypermpnn_sequences.csv",
+      "sha256": "0afd183a7b0cefcb31832061da61eb4cef5e35362ab117cfbcbf3232c010a3e3",
+      "size_bytes": 1491,
+      "rows": 8,
+      "producer": {
+        "name": "hypermpnn",
+        "version": "tamarind-2026-11-14",
+        "kind": "model"
+      },
+      "source_note": "Tamarind Bio HyperMPNN, job sonazyme-nucb-hypermpnn, seed 7, eight sequences, with the five catalytic residues fixed in the request.",
+      "copy": "Unmodified provider export"
+    },
+    {
+      "file": "hypermpnn_sequences.fasta",
+      "sha256": "91795529f1ccf78ee5c5cf6cbba9a88ff6993de08317ceb17f2314cff5a50dde",
+      "size_bytes": 1736,
+      "copy": "Derived from the provider CSV"
+    },
+    {
+      "file": "run-snapshot.json",
+      "sha256": "b9f3821a7508c4351b9e0479a00f3a1462075d488cfa7a46015382d277a124f8",
+      "size_bytes": 155250,
+      "copy": "Verified export of runs/demo; original manifest preserved"
+    }
+  ],
+  "notice": "Predictions only. No Sonazyme wet-lab result. Model version labels are those recorded during import, not independently verified checkpoint digests."
+}
