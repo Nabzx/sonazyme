@@ -84,3 +84,62 @@ has to be structural: a definition of the site that comes from a source, an
 exclusion applied at the request, and a record of what was rejected. Scoring
 afterwards and hoping the bad ones sink is not enough, because here the bad
 one floated to fourth.
+
+## A second scorer does the same thing
+
+- Date: 2026-11-15
+- Status: a result, from a real run
+
+ThermoMPNN was run over the same enzyme, independently of MutRank and on a
+different sequence. It was given the 110-residue mature chain, folded on its
+own by Boltz 2.2.1, rather than the 142-residue precursor. That is 2,090 single
+point mutations, each scored once.
+
+It reaches the same place. Of its top twelve mutations, two change a catalytic
+residue, and **the second-best mutation in the whole scan is Glu94 to valine**.
+
+| Rank | Mutation | ddG, kcal/mol | On the site |
+| --- | --- | --- | --- |
+| 1 | C100F | -1.09 | no |
+| **2** | **E94V** | **-0.95** | **yes** |
+| 3 | D38C | -0.90 | no |
+| 4 | D64A | -0.85 | no |
+| 5 | E94I | -0.83 | **yes** |
+
+Glu94 is not a marginal residue either. It is the general base, the residue
+that stands where the His-Me finger family keeps its catalytic histidine, and
+the paper reports that the equivalent E88A abolished activity. Across the full
+scan, 95 proposals fall on one of the five catalytic residues.
+
+So two different scorers, built by different groups, run on different sequences
+and reporting in different units, both put active-site destruction in their top
+five. MutRank favoured Asn117; ThermoMPNN favours Glu94. This is not one tool
+having a bad day. It is what a model optimising for a well-packed fold does
+when nothing in its objective knows the protein has a job.
+
+[ADR-0005](../adr/0005-active-site-is-not-a-design-target.md) was written before
+any tool output existed. Two independent runs have now walked into it.
+
+## The two runs do not share a numbering frame
+
+Worth recording before anyone compares the two tables directly.
+
+This repository models NucB as the **142-residue precursor**, and
+`docs/result-NucB_Biofilm_DNase/` is a fold of that full sequence. The
+ThermoMPNN run above used the **110-residue mature chain**, which is precursor
+residues 33 to 142. Mature position *i* is precursor position *i* + 32.
+
+Two things follow:
+
+- Positions are not interchangeable. The mature C68F above is the precursor
+  C100F in the table. Every ThermoMPNN position was mapped by adding 32 before
+  import, and each mapped row was checked against the chassis sequence.
+- The precursor fold carries the signal peptide, which UniProt F1BV52 gives as
+  residues 1 to 22 and which is cleaved from the secreted enzyme. MutRank's
+  top-ranked mutation, H8L, sits inside it. Whatever that proposal does, it
+  cannot change the stability of a protein the residue is not part of. The
+  precursor fold also scores lower, pTM 0.76 against 0.95 for the mature chain,
+  which is what a disordered terminus does to a prediction.
+
+Neither point affects the active-site finding, since both runs agree on the same
+five catalytic residues from the same source.
